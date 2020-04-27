@@ -18,8 +18,13 @@ if __name__ == "__main__":
     rewards = dataset['rewards']
     actions = dataset['actions']
 
-    env.reset()
-    env.set_state(qpos[0], qvel[0])
-    for t in range(qpos.shape[0]):
-        env.set_state(qpos[t], qvel[t])
-        env.render()
+    NSAMPLES = 100000
+    import matplotlib.pyplot as plt
+    plt.scatter(qpos[:NSAMPLES, 0], qpos[:NSAMPLES, 1])
+    plt.savefig("maze_vis.png")
+
+    # env.reset()
+    # env.set_state(qpos[0], qvel[0])
+    # for t in range(qpos.shape[0]):
+    #     env.set_state(qpos[t], qvel[t])
+    #     env.render()
