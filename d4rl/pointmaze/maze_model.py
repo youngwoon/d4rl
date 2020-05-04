@@ -124,6 +124,19 @@ OPEN = \
         "#OOOOO#\\"+\
         "#######"
 
+HARD_EXP_MAZE = \
+        "#####################\\"+\
+        "#OOOO#OOOO#OOOO#OOOO#\\"+\
+        "#OOO###OOO#OOO###OOO#\\"+\
+        "#OOOOOOOOO#OOOOOOOOO#\\"+\
+        "#OOO###OOO#OOO###OOO#\\"+\
+        "#OOOO#OOOO#OOOO#OOOO#\\"+\
+        "#OOOO#OOO###OOO#OOOO#\\"+\
+        "#OOOO#OOOOOOOOO#OOOO#\\"+\
+        "#OOOO#OOO###OOO#OOOO#\\"+\
+        "#OOOO#OOOO#OOOO#OOOG#\\"+\
+        "#####################"
+
 
 class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
     def __init__(self,

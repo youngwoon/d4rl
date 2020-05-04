@@ -1,6 +1,6 @@
 import logging
-from offline_rl.pointmaze import waypoint_controller
-from offline_rl.pointmaze import maze_model
+from d4rl.pointmaze import waypoint_controller
+from d4rl.pointmaze import maze_model
 import numpy as np
 import pickle
 import gzip
@@ -40,10 +40,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--render', action='store_true', help='Render trajectories')
     parser.add_argument('--noisy', action='store_true', help='Noisy actions')
-    parser.add_argument('--maze', type=str, default='umaze', help='Maze type. small or default')
+    parser.add_argument('--maze', type=str, default='hardexp', help='Maze type. small or default')
     parser.add_argument('--num_samples', type=int, default=int(1e6), help='Num samples to collect')
     args = parser.parse_args()
-
 
     if args.maze == 'umaze':
         maze = maze_model.U_MAZE
@@ -54,6 +53,9 @@ def main():
     elif args.maze == 'medium':
         maze = maze_model.MEDIUM_MAZE
         max_episode_steps = 250
+    elif args.maze == 'hardexp':
+        maze = maze_model.HARD_EXP_MAZE
+        max_episode_steps = 800
     else:
         maze = maze_model.LARGE_MAZE
         max_episode_steps = 600
