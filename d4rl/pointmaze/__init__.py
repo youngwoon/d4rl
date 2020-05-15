@@ -1,4 +1,4 @@
-from .maze_model import MazeEnv, OPEN, U_MAZE, MEDIUM_MAZE, LARGE_MAZE, HARD_EXP_MAZE
+from .maze_model import MazeEnv, OPEN, U_MAZE, MEDIUM_MAZE, LARGE_MAZE, HARD_EXP_MAZE, HARD_EXP_MAZE_V2
 from gym.envs.registration import register
 
 register(
@@ -73,6 +73,20 @@ register(
     }
 )
 
+
+register(
+    id='maze2d-hardexp-v2',
+    entry_point='d4rl.pointmaze:MazeEnv',
+    max_episode_steps=800,
+    kwargs={
+        'maze_spec':HARD_EXP_MAZE_V2,
+        'reward_type':'sparse',
+        'reset_target': False,
+        'ref_min_score': 4.83,
+        'ref_max_score': 191.99,
+        'dataset_url':'http://maze2d-hardexpv2-sparse.hdf5'
+    }
+)
 
 
 register(

@@ -5,6 +5,7 @@ import numpy as np
 import pickle
 import gzip
 import h5py
+import os
 import argparse
 
 
@@ -40,8 +41,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--render', action='store_true', help='Render trajectories')
     parser.add_argument('--noisy', action='store_true', help='Noisy actions')
-    parser.add_argument('--maze', type=str, default='hardexp', help='Maze type. small or default')
-    parser.add_argument('--num_samples', type=int, default=int(1e6), help='Num samples to collect')
+    parser.add_argument('--maze', type=str, default='hardexpv2', help='Maze type. small or default')
+    parser.add_argument('--num_samples', type=int, default=int(2e5), help='Num samples to collect')
+    parser.add_argument('--data_dir', type=str, default='.', help='Base directory for dataset')
+    parser.add_argument('--batch_idx', type=int, default=int(-1), help='(Optional) Index of generated data batch')
     args = parser.parse_args()
 
     if args.maze == 'umaze':
@@ -56,6 +59,9 @@ def main():
     elif args.maze == 'hardexp':
         maze = maze_model.HARD_EXP_MAZE
         max_episode_steps = 800
+    elif args.maze == 'hardexpv2':
+        maze = maze_model.HARD_EXP_MAZE_V2
+        max_episode_steps = 1500
     else:
         maze = maze_model.LARGE_MAZE
         max_episode_steps = 600
@@ -83,7 +89,7 @@ def main():
 
         ns, _, _, _ = env.step(act)
 
-        if len(data['observations']) % 10000 == 0:
+        if len(data['observations']) % 1000 == 0:
             print(len(data['observations']))
 
         ts += 1
@@ -97,11 +103,15 @@ def main():
         if args.render:
             env.render()
 
-    
-    if args.noisy:
-        fname = 'maze2d-%s-noisy.hdf5' % args.maze
+    if args.batch_idx >= 0:
+        dir_name = 'maze2d-%s-noisy' % args.maze if args.noisy else 'maze2d-%s-sparse' % args.maze
+        os.makedirs(os.path.join(args.data_dir, dir_name), exist_ok=True)
+        fname = os.path.join(args.data_dir, dir_name, "rollouts_batch_{}.h5".format(args.batch_idx))
     else:
-        fname = 'maze2d-%s.hdf5' % args.maze
+        os.makedirs(args.data_dir, exist_ok=True)
+        fname = 'maze2d-%s-noisy.hdf5' % args.maze if args.noisy else 'maze2d-%s-sparse.hdf5' % args.maze
+        fname = os.path.join(args.data_dir, fname)
+
     dataset = h5py.File(fname, 'w')
     npify(data)
     for k in data:
