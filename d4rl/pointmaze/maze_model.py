@@ -5,6 +5,7 @@ from d4rl import offline_env
 from d4rl.pointmaze.dynamic_mjc import MJCModel
 import numpy as np
 import random
+import mujoco_py
 
 
 WALL = 10
@@ -163,10 +164,12 @@ HARD_EXP_MAZE_V2 = \
 
 
 class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
+    AGENT_CENTRIC_RES = 64
     def __init__(self,
                  maze_spec=U_MAZE,
                  reward_type='dense',
                  reset_target=False,
+                 agent_centric_view=False,
                  **kwargs):
         offline_env.OfflineEnv.__init__(self, **kwargs)
 
@@ -174,6 +177,7 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         self.str_maze_spec = maze_spec
         self.maze_arr = parse_maze(maze_spec)
         self.reward_type = reward_type
+        self.agent_centric_view = agent_centric_view
         self.reset_locations = list(zip(*np.where(self.maze_arr == EMPTY)))
         self.reset_locations.sort()
 
@@ -210,6 +214,13 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
             raise ValueError('Unknown reward type %s' % self.reward_type)
         done = False
         return ob, reward, done, {}
+
+    def render(self, mode, *args, **kwargs):
+        if self.agent_centric_view:
+            if 'width' not in kwargs and 'height' not in kwargs:
+                kwargs['width'] = self.AGENT_CENTRIC_RES
+                kwargs['height'] = self.AGENT_CENTRIC_RES
+        return super().render(mode, *args, **kwargs)
 
     def _get_obs(self):
         return np.concatenate([self.sim.data.qpos, self.sim.data.qvel]).ravel()
@@ -250,8 +261,12 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
         return self._get_obs()
 
     def viewer_setup(self):
+        if self.agent_centric_view:
+            self.viewer.cam.type = mujoco_py.generated.const.CAMERA_TRACKING
+            self.viewer.cam.distance = 5.0
+        else:
+            self.viewer.cam.distance = self.model.stat.extent * 1.0  # how much you "zoom in", model.stat.extent is the max limits of the arena
         self.viewer.cam.trackbodyid = 0  # id of the body to track ()
-        self.viewer.cam.distance = self.model.stat.extent * 1.0  # how much you "zoom in", model.stat.extent is the max limits of the arena
         self.viewer.cam.lookat[0] += 0.5  # x,y,z offset from the object (works if trackbodyid=-1)
         self.viewer.cam.lookat[1] += 0.5
         self.viewer.cam.lookat[2] += 0.5
