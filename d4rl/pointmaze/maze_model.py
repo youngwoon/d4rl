@@ -164,7 +164,7 @@ HARD_EXP_MAZE_V2 = \
 
 
 class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
-    AGENT_CENTRIC_RES = 64
+    AGENT_CENTRIC_RES = 32
     def __init__(self,
                  maze_spec=U_MAZE,
                  reward_type='dense',
