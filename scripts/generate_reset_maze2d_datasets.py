@@ -13,15 +13,17 @@ import tqdm
 def reset_data():
     return {'states': [],
             'actions': [],
+            'images': [],
             'terminals': [],
             'infos/goal': [],
             'infos/qpos': [],
             'infos/qvel': [],
             }
 
-def append_data(data, s, a, tgt, done, env_data):
+def append_data(data, s, a, img, tgt, done, env_data):
     data['states'].append(s)
     data['actions'].append(a)
+    data['images'].append(img)
     data['terminals'].append(done)
     data['infos/goal'].append(tgt)
     data['infos/qpos'].append(env_data.qpos.ravel().copy())
@@ -36,16 +38,44 @@ def npify(data):
 
         data[k] = np.array(data[k], dtype=dtype)
 
+
+def reset_env(env, agent_centric=False):
+    s = env.reset()
+    env.set_target()
+    if agent_centric:
+        [env.render(mode='rgb_array') for _ in range(100)]    # so that camera can catch up with agent
+    return s
+
+
+def save_video(file_name, frames, fps=20, video_format='mp4'):
+    import skvideo.io
+    skvideo.io.vwrite(
+        file_name,
+        frames,
+        inputdict={
+            '-r': str(int(fps)),
+        },
+        outputdict={
+            '-f': video_format,
+            '-pix_fmt': 'yuv420p', # '-pix_fmt=yuv420p' needed for osx https://github.com/scikit-video/scikit-video/issues/74
+        }
+    )
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--render', action='store_true', help='Render trajectories')
     parser.add_argument('--noisy', action='store_true', help='Noisy actions')
-    parser.add_argument('--maze', type=str, default='hardexp', help='Maze type. small or default')
+    parser.add_argument('--agent_centric', action='store_true', help='Whether agent-centric images are rendered.')
+    parser.add_argument('--save_images', action='store_true', help='Whether rendered images are saved.')
+    parser.add_argument('--maze', type=str, default='hardexpv2', help='Maze type. small or default')
     parser.add_argument('--data_dir', type=str, default='.', help='Base directory for dataset')
-    parser.add_argument('--num_samples', type=int, default=int(2e4), help='Num samples to collect')
+    parser.add_argument('--num_samples', type=int, default=int(2e5), help='Num samples to collect')
     parser.add_argument('--min_traj_len', type=int, default=int(20), help='Min number of samples per trajectory')
     parser.add_argument('--batch_idx', type=int, default=int(-1), help='(Optional) Index of generated data batch')
     args = parser.parse_args()
+    if args.agent_centric and not args.save_images:
+        raise ValueError("Need to save images for agent-centric dataset")
 
     if args.maze == 'umaze':
         maze = maze_model.U_MAZE
@@ -59,14 +89,16 @@ def main():
     elif args.maze == 'hardexp':
         maze = maze_model.HARD_EXP_MAZE
         max_episode_steps = 300
+    elif args.maze == 'hardexpv2':
+        maze = maze_model.HARD_EXP_MAZE_V2
+        max_episode_steps = 1600 if not args.agent_centric else 400
     else:
         maze = maze_model.LARGE_MAZE
         max_episode_steps = 600
     controller = waypoint_controller.WaypointController(maze)
-    env = maze_model.MazeEnv(maze)
+    env = maze_model.MazeEnv(maze, agent_centric_view=args.agent_centric)
 
-    s = env.reset()
-    env.set_target()
+    s = reset_env(env, agent_centric=args.agent_centric)
 
     data = reset_data()
     ts, cnt = 0, 0
@@ -80,7 +112,8 @@ def main():
         act = np.clip(act, -1.0, 1.0)
         if ts >= max_episode_steps:
             done = True
-        append_data(data, s, act, env._target, done, env.sim.data)
+        append_data(data, s, act, env.render(mode='rgb_array'),
+                    env._target, done, env.sim.data)
 
         ns, _, _, _ = env.step(act)
 
@@ -90,17 +123,17 @@ def main():
                 save_data(args, data, cnt)
                 cnt += 1
             data = reset_data()
-            s = env.reset()
-            env.set_target()
+            s = reset_env(env, agent_centric=args.agent_centric)
             ts = 0
         else:
             s = ns
 
         if args.render:
-            env.render()
+            env.render(mode='human')
 
 
 def save_data(args, data, idx):
+    # save_video("seq_{}.mp4".format(idx), data['images'])
     dir_name = 'maze2d-%s-noisy' % args.maze if args.noisy else 'maze2d-%s' % args.maze
     if args.batch_idx >= 0:
         dir_name = os.path.join(dir_name, "batch_{}".format(args.batch_idx))
@@ -115,7 +148,10 @@ def save_data(args, data, idx):
     npify(data)
     traj_data = f.create_group("traj0")
     traj_data.create_dataset("states", data=data['states'])
-    traj_data.create_dataset("images", data=np.zeros((data['states'].shape[0], 2, 2, 3), dtype=np.uint8))
+    if args.save_images:
+        traj_data.create_dataset("images", data=data['images'], dtype=np.uint8)
+    else:
+        traj_data.create_dataset("images", data=np.zeros((data['states'].shape[0], 2, 2, 3), dtype=np.uint8))
     traj_data.create_dataset("actions", data=data['actions'])
 
     terminals = data['terminals']

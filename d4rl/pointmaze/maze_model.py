@@ -263,7 +263,7 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
     def viewer_setup(self):
         if self.agent_centric_view:
             self.viewer.cam.type = mujoco_py.generated.const.CAMERA_TRACKING
-            self.viewer.cam.distance = 5.0
+            self.viewer.cam.distance = 7.0
         else:
             self.viewer.cam.distance = self.model.stat.extent * 1.0  # how much you "zoom in", model.stat.extent is the max limits of the arena
         self.viewer.cam.trackbodyid = 0  # id of the body to track ()
