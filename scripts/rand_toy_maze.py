@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 from scipy.signal import convolve2d
+from d4rl.pointmaze.maze_layouts import sample_layout
 
 # SIZE = 40
 #
@@ -127,74 +128,12 @@ from scipy.signal import convolve2d
 # COVERAGE_FRAC = 0.25     # until what fraction of maze covered we keep adding walls
 # TEMP = 20
 
-def compute_sampling_probs(maze_layout, filter, temp):
-    probs = convolve2d(maze_layout, filter, 'valid')
-    return np.exp(-temp*probs) / np.sum(np.exp(-temp*probs))
 
-
-def sample_2d(probs, rng):
-    flat_probs = probs.flatten()
-    sample = rng.choice(np.arange(flat_probs.shape[0]), p=flat_probs)
-    sampled_2d = np.zeros_like(flat_probs)
-    sampled_2d[sample] = 1
-    idxs = np.where(sampled_2d.reshape(probs.shape))
-    return idxs[0][0], idxs[1][0]
-
-
-def place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp):
-    size = maze_layout.shape[0]
-    sample_vert_hor = 0 if rng.random() < 0.5 else 1
-    sample_len = int(max((max_len_frac-min_len_frac) * size * rng.random() + min_len_frac*size, 3))
-    sample_door_offset = rng.choice(np.arange(1, sample_len - 1))
-
-    if sample_vert_hor == 0:
-        filter = np.ones((sample_len, 5)) / (5*sample_len)
-        probs = compute_sampling_probs(maze_layout, filter, temp)
-        middle_idxs = sample_2d(probs, rng)
-        sample_pos1 = middle_idxs[0]
-        sample_pos2 = middle_idxs[1] + 2
-
-        maze_layout[sample_pos1 : sample_pos1 + sample_len, sample_pos2] = 1
-        maze_layout[sample_pos1 + sample_door_offset, sample_pos2] = 0
-        maze_layout[sample_pos1 + sample_door_offset - 1, sample_pos2 + 1] = 1
-        maze_layout[sample_pos1 + sample_door_offset - 1, sample_pos2 - 1] = 1
-        maze_layout[sample_pos1 + sample_door_offset + 1, sample_pos2 + 1] = 1
-        maze_layout[sample_pos1 + sample_door_offset + 1, sample_pos2 - 1] = 1
-    else:
-        filter = np.ones((5, sample_len)) / (5 * sample_len)
-        probs = compute_sampling_probs(maze_layout, filter, temp)
-        middle_idxs = sample_2d(probs, rng)
-        sample_pos1 = middle_idxs[1]
-        sample_pos2 = middle_idxs[0] + 2
-
-        maze_layout[sample_pos2, sample_pos1: sample_pos1 + sample_len] = 1
-        maze_layout[sample_pos2, sample_pos1 + sample_door_offset] = 0
-        maze_layout[sample_pos2 + 1, sample_pos1 + sample_door_offset - 1] = 1
-        maze_layout[sample_pos2 - 1, sample_pos1 + sample_door_offset - 1] = 1
-        maze_layout[sample_pos2 + 1, sample_pos1 + sample_door_offset + 1] = 1
-        maze_layout[sample_pos2 - 1, sample_pos1 + sample_door_offset + 1] = 1
-    return maze_layout
-
-
-def sample_layout(seed=None,
-                  size=40,
-                  max_len_frac=0.5,
-                  min_len_frac=0.3,
-                  coverage_frac=0.25,
-                  temp=20):
-    rng = np.random.default_rng(seed=seed)
-    maze_layout = np.zeros((size, size))
-
-    while np.mean(maze_layout) < coverage_frac:
-        maze_layout = place_wall(maze_layout, rng, min_len_frac, max_len_frac, temp)
-
-    return maze_layout
-
-
-maze_layout = sample_layout()
+maze_layout = sample_layout(seed=0)
 
 
 RENDER_SCALE = 10
 render_maze_layout = maze_layout.repeat(RENDER_SCALE, axis=0).repeat(RENDER_SCALE, axis=1)
+render_maze_layout = np.flip(np.flip(render_maze_layout, 0), 1)
 
 cv2.imwrite("toy_maze.png", (1 - render_maze_layout)*255)

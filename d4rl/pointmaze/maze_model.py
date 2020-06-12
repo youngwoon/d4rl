@@ -6,6 +6,7 @@ from d4rl.pointmaze.dynamic_mjc import MJCModel
 import numpy as np
 import random
 import mujoco_py
+from d4rl.pointmaze.maze_layouts import U_MAZE
 
 
 WALL = 10
@@ -81,86 +82,6 @@ def point_maze(maze_str):
     actuator.motor(joint="ball_y", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
 
     return mjcmodel
-
-
-LARGE_MAZE = \
-        "############\\"+\
-        "#OOOO#OOOOO#\\"+\
-        "#O##O#O#O#O#\\"+\
-        "#OOOOOO#OOO#\\"+\
-        "#O####O###O#\\"+\
-        "#OO#O#OOOOO#\\"+\
-        "##O#O#O#O###\\"+\
-        "#OO#OOO#OGO#\\"+\
-        "############"
-
-MEDIUM_MAZE = \
-        '########\\'+\
-        '#OO##OO#\\'+\
-        '#OO#OOO#\\'+\
-        '##OOO###\\'+\
-        '#OO#OOO#\\'+\
-        '#O#OO#O#\\'+\
-        '#OOO#OG#\\'+\
-        "########"
-
-SMALL_MAZE = \
-        "######\\"+\
-        "#OOOO#\\"+\
-        "#O##O#\\"+\
-        "#OOOO#\\"+\
-        "######"
-
-U_MAZE = \
-        "#####\\"+\
-        "#GOO#\\"+\
-        "###O#\\"+\
-        "#OOO#\\"+\
-        "#####"
-
-OPEN = \
-        "#######\\"+\
-        "#OOOOO#\\"+\
-        "#OOGOO#\\"+\
-        "#OOOOO#\\"+\
-        "#######"
-
-HARD_EXP_MAZE = \
-        "#####################\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOOOOOOO#OOOOOOOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOOOOOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOG#\\"+\
-        "#####################"
-
-
-HARD_EXP_MAZE_V2 = \
-        "#####################\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOOOOOOO#OOOOOOOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOOOOOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#################OG##\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOOOOOOO#OOOO#\\"+\
-        "#OOOO#OOO###OOO#OOOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOOOOOOO#OOOOOOOOO#\\"+\
-        "#OOO###OOO#OOO###OOO#\\"+\
-        "#OOOO#OOOO#OOOO#OOOO#\\"+\
-        "#####################"
 
 
 class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):

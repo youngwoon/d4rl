@@ -1,6 +1,6 @@
 import logging
 from d4rl.pointmaze import waypoint_controller
-from d4rl.pointmaze import maze_model
+from d4rl.pointmaze import maze_model, maze_layouts
 import numpy as np
 import pickle
 import gzip
@@ -48,22 +48,22 @@ def main():
     args = parser.parse_args()
 
     if args.maze == 'umaze':
-        maze = maze_model.U_MAZE
+        maze = maze_layouts.U_MAZE
         max_episode_steps = 150
     elif args.maze == 'open':
-        maze = maze_model.OPEN
+        maze = maze_layouts.OPEN
         max_episode_steps = 150
     elif args.maze == 'medium':
-        maze = maze_model.MEDIUM_MAZE
+        maze = maze_layouts.MEDIUM_MAZE
         max_episode_steps = 250
     elif args.maze == 'hardexp':
-        maze = maze_model.HARD_EXP_MAZE
+        maze = maze_layouts.HARD_EXP_MAZE
         max_episode_steps = 800
     elif args.maze == 'hardexpv2':
-        maze = maze_model.HARD_EXP_MAZE_V2
+        maze = maze_layouts.HARD_EXP_MAZE_V2
         max_episode_steps = 1500
     else:
-        maze = maze_model.LARGE_MAZE
+        maze = maze_layouts.LARGE_MAZE
         max_episode_steps = 600
     controller = waypoint_controller.WaypointController(maze)
     env = maze_model.MazeEnv(maze)
