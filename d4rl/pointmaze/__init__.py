@@ -155,6 +155,37 @@ register(
 )
 
 
+register(
+    id='maze2d-randMaze0S30-ac-v0',
+    entry_point='d4rl.pointmaze:MazeEnv',
+    max_episode_steps=800,
+    kwargs={
+        'maze_spec': rand_layout(seed=0, size=30),
+        'agent_centric_view': True,
+        'reward_type': 'sparse',
+        'reset_target': False,
+        'ref_min_score': 4.83,
+        'ref_max_score': 191.99,
+        'dataset_url':'http://maze2d-hardexpv2-sparse.hdf5'
+    }
+)
+
+
+register(
+    id='maze2d-randMaze0S40-ac-v0',
+    entry_point='d4rl.pointmaze:MazeEnv',
+    max_episode_steps=800,
+    kwargs={
+        'maze_spec': rand_layout(seed=0, size=40),
+        'agent_centric_view': True,
+        'reward_type': 'sparse',
+        'reset_target': False,
+        'ref_min_score': 4.83,
+        'ref_max_score': 191.99,
+        'dataset_url':'http://maze2d-hardexpv2-sparse.hdf5'
+    }
+)
+
 
 ##################### OLD LAYOUTS #######################
 
