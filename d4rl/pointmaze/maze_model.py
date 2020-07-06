@@ -81,6 +81,10 @@ def point_maze(maze_str):
     actuator.motor(joint="ball_x", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
     actuator.motor(joint="ball_y", ctrlrange=[-1.0, 1.0], ctrllimited=True, gear=100)
 
+    # for topdown rendering
+    # worldbody.camera(mode="fixed", name="birdview", pos="11.5 11.5 29.0", quat="0.7071 0 0 0.7071")
+    # worldbody.camera(mode="fixed", name="birdview", pos="21.5 21.5 49.0", quat="0.7071 0 0 0.7071")
+
     return mjcmodel
 
 

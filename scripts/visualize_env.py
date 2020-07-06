@@ -3,13 +3,13 @@ import d4rl
 import gym
 
 
-START_POS = [18., 2.]
-TARGET_POS = [6., 18.]
+START_POS = [27., 4.]
+TARGET_POS = [18., 8.]
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env_name', type=str, default='maze2d-randMaze42-ac-v0')
+    parser.add_argument('--env_name', type=str, default='maze2d-randMaze0S40-ac-v0')
     args = parser.parse_args()
 
     env = gym.make(args.env_name)

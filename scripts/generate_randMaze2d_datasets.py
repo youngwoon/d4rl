@@ -40,7 +40,7 @@ def npify(data):
 
 
 def sample_env_and_controller(args):
-    layout_str = maze_layouts.rand_layout()
+    layout_str = maze_layouts.rand_layout(args.rand_maze_size)
     env = maze_model.MazeEnv(layout_str, agent_centric_view=args.agent_centric)
     controller = waypoint_controller.WaypointController(layout_str)
     return env, controller
@@ -78,6 +78,7 @@ def main():
     parser.add_argument('--data_dir', type=str, default='.', help='Base directory for dataset')
     parser.add_argument('--num_samples', type=int, default=int(2e5), help='Num samples to collect')
     parser.add_argument('--min_traj_len', type=int, default=int(20), help='Min number of samples per trajectory')
+    parser.add_argument('--rand_maze_size', type=int, default=int(20), help='Size of generate maze')
     parser.add_argument('--batch_idx', type=int, default=int(-1), help='(Optional) Index of generated data batch')
     args = parser.parse_args()
     if args.agent_centric and not args.save_images:
@@ -110,7 +111,7 @@ def main():
         act = np.clip(act, -1.0, 1.0)
         if ts >= max_episode_steps:
             done = True
-        append_data(data, s, act, env.render(mode='rgb_array'),
+        append_data(data, s, act, env.render(mode='rgb_array'), #, camera_name='birdview'),
                     env._target, done, env.sim.data)
 
         ns, _, _, _ = env.step(act)
