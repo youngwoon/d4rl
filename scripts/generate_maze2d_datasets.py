@@ -1,3 +1,4 @@
+import gym
 import logging
 from d4rl.pointmaze import waypoint_controller
 from d4rl.pointmaze import maze_model, maze_layouts
@@ -41,30 +42,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--render', action='store_true', help='Render trajectories')
     parser.add_argument('--noisy', action='store_true', help='Noisy actions')
-    parser.add_argument('--maze', type=str, default='hardexpv2', help='Maze type. small or default')
-    parser.add_argument('--num_samples', type=int, default=int(2e5), help='Num samples to collect')
+    parser.add_argument('--env_name', type=str, default='maze2d-umaze-v1', help='Maze type')
+    parser.add_argument('--num_samples', type=int, default=int(1e6), help='Num samples to collect')
     parser.add_argument('--data_dir', type=str, default='.', help='Base directory for dataset')
     parser.add_argument('--batch_idx', type=int, default=int(-1), help='(Optional) Index of generated data batch')
     args = parser.parse_args()
 
-    if args.maze == 'umaze':
-        maze = maze_layouts.U_MAZE
-        max_episode_steps = 150
-    elif args.maze == 'open':
-        maze = maze_layouts.OPEN
-        max_episode_steps = 150
-    elif args.maze == 'medium':
-        maze = maze_layouts.MEDIUM_MAZE
-        max_episode_steps = 250
-    elif args.maze == 'hardexp':
-        maze = maze_layouts.HARD_EXP_MAZE
-        max_episode_steps = 800
-    elif args.maze == 'hardexpv2':
-        maze = maze_layouts.HARD_EXP_MAZE_V2
-        max_episode_steps = 1500
-    else:
-        maze = maze_layouts.LARGE_MAZE
-        max_episode_steps = 600
+    env = gym.make(args.env_name)
+    maze = env.str_maze_spec
+    max_episode_steps = env._max_episode_steps
+
     controller = waypoint_controller.WaypointController(maze)
     env = maze_model.MazeEnv(maze)
 
