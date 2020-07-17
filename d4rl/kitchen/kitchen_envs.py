@@ -92,9 +92,32 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
     #     # Disable rendering to speed up environment evaluation.
     #     return []
 
+    def get_goal(self):
+        """Loads goal state from dataset for goal-conditioned approaches (like RPL)."""
+        raise NotImplementedError
+
+    def _split_data_into_seqs(self, data):
+        """Splits dataset object into list of sequence dicts."""
+        seq_end_idxs = np.where(data['terminals'])[0]
+        start = 0
+        seqs = []
+        for end_idx in seq_end_idxs:
+            seqs.append(dict(
+                states=data['observations'][start:end_idx + 1],
+                actions=data['actions'][start:end_idx + 1],
+            ))
+            start = end_idx + 1
+        return seqs
+
 
 class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'slide cabinet']
+
+    def get_goal(self):
+        data = self.get_dataset()
+        seqs = self._split_data_into_seqs(data)
+        return seqs[0]['states'][-1]
+
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
