@@ -43,9 +43,11 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
             ref_max_score=ref_max_score,
             ref_min_score=ref_min_score)
 
-    def _get_task_goal(self):
+    def _get_task_goal(self, task=None):
+        if task is None:
+            task = ['microwave', 'kettle', 'bottom burner', 'light switch']
         new_goal = np.zeros_like(self.goal)
-        for element in self.TASK_ELEMENTS:
+        for element in task:
             element_idx = OBS_ELEMENT_INDICES[element]
             element_goal = OBS_ELEMENT_GOALS[element]
             new_goal[element_idx] = element_goal
@@ -61,7 +63,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         reward = 0.
         next_q_obs = obs_dict['qp']
         next_obj_obs = obs_dict['obj_qp']
-        next_goal = obs_dict['goal']
+        next_goal = self._get_task_goal(task=self.TASK_ELEMENTS) #obs_dict['goal']
         idx_offset = len(next_q_obs)
         completions = []
         for element in self.tasks_to_complete:
@@ -96,3 +98,8 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+    #TASK_ELEMENTS = ['bottom burner', 'microwave', 'kettle', 'light switch']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'light switch']
+    #TASK_ELEMENTS = ['bottom burner']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet', 'bottom burner', 'light switch', 'top burner']
