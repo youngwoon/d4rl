@@ -88,6 +88,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         obs, reward, done, env_info = super(KitchenBase, self).step(a, b=b)
         if self.TERMINATE_ON_TASK_COMPLETE:
             done = not self.tasks_to_complete
+        env_info['completed_tasks'] = set(self.TASK_ELEMENTS) - set(self.tasks_to_complete)
         return obs, reward, done, env_info
 
     # def render(self, mode='human'):
