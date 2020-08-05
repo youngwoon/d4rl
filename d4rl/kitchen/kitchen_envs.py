@@ -35,7 +35,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
     TERMINATE_ON_TASK_COMPLETE = True
 
     def __init__(self, dataset_url=None, ref_max_score=None, ref_min_score=None, **kwargs):
-        self.tasks_to_complete = set(self.TASK_ELEMENTS)
+        self.tasks_to_complete = list(self.TASK_ELEMENTS)
         super(KitchenBase, self).__init__(**kwargs)
         OfflineEnv.__init__(
             self,
@@ -55,7 +55,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         return new_goal
 
     def reset_model(self):
-        self.tasks_to_complete = set(self.TASK_ELEMENTS)
+        self.tasks_to_complete = list(self.TASK_ELEMENTS)
         return super(KitchenBase, self).reset_model()
 
     def _get_reward_n_score(self, obs_dict):
@@ -66,14 +66,16 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         next_goal = self._get_task_goal(task=self.TASK_ELEMENTS) #obs_dict['goal']
         idx_offset = len(next_q_obs)
         completions = []
+        all_completed_so_far = True
         for element in self.tasks_to_complete:
             element_idx = OBS_ELEMENT_INDICES[element]
             distance = np.linalg.norm(
                 next_obj_obs[..., element_idx - idx_offset] -
                 next_goal[element_idx])
             complete = distance < BONUS_THRESH
-            if complete:
+            if complete: # and all_completed_so_far: #element == self.tasks_to_complete[0]:
                 completions.append(element)
+            all_completed_so_far = all_completed_so_far and complete
         if self.REMOVE_TASKS_WHEN_COMPLETE:
             [self.tasks_to_complete.remove(element) for element in completions]
         bonus = float(len(completions))
@@ -116,13 +118,29 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
     def get_goal(self):
         data = self.get_dataset()
         seqs = self._split_data_into_seqs(data)
-        return seqs[0]['states'][-1]
+        return seqs[1]['states'][-1]
 
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
     #TASK_ELEMENTS = ['bottom burner', 'microwave', 'kettle', 'light switch']
     #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'light switch']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'slide cabinet']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'hinge cabinet']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'top burner']
+    #TASK_ELEMENTS = ['light switch', 'top burner', 'microwave', 'kettle']
+    #TASK_ELEMENTS = ['light switch', 'slide cabinet', 'microwave', 'kettle']
+    #TASK_ELEMENTS = ['hinge cabinet', 'light switch', 'top burner', 'slide cabinet']
+    #TASK_ELEMENTS = ['hinge cabinet', 'slide cabinet', 'microwave', 'kettle']
+    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'slide cabinet', 'hinge cabinet']
+    #TASK_ELEMENTS = ['kettle', 'bottom burner', 'slide cabinet', 'hinge cabinet']
+
+    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'kettle', 'light switch', 'slide cabinet', 'hinge cabinet']
+    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'light switch', 'slide cabinet', 'hinge cabinet', 'kettle']
+    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'slide cabinet', 'hinge cabinet', 'light switch', 'kettle']
+    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'kettle', 'slide cabinet', 'top burner', 'hinge cabinet']
+
+    #TASK_ELEMENTS = ['light switch', 'top burner', 'slide cabinet', 'hinge cabinet']
     #TASK_ELEMENTS = ['bottom burner']
     #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet']
     #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet', 'bottom burner', 'light switch', 'top burner']
