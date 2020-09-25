@@ -121,9 +121,13 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
 
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
-    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+    # TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
     #TASK_ELEMENTS = ['bottom burner', 'microwave', 'kettle', 'light switch']
     #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'light switch']
     #TASK_ELEMENTS = ['bottom burner']
     #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet']
     #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet', 'bottom burner', 'light switch', 'top burner']
+    print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("Kitchen Env task is modified!")
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+    TASK_ELEMENTS = ['microwave', 'kettle', 'hinge cabinet', 'light switch']
