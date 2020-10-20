@@ -3,9 +3,13 @@ from d4rl.pointmaze import q_iteration
 from d4rl.pointmaze.gridcraft import grid_env
 from d4rl.pointmaze.gridcraft import grid_spec
 
+import os
+
 
 ZEROS = np.zeros((2,), dtype=np.float32)
 ONES = np.zeros((2,), dtype=np.float32)
+
+STORED_Q_FILE = "q_vals.npy"
 
 
 class WaypointController(object):
@@ -68,7 +72,12 @@ class WaypointController(object):
         self._waypoint_idx = 0
 
         self.env.gs[target] = grid_spec.REWARD
-        q_values = q_iteration.q_iteration(env=self.env, num_itrs=200, discount=0.99)
+        if os.path.exists(STORED_Q_FILE):
+            print("!!! LOADING Q-VALUE FROM FILE !!!")
+            q_values = np.load(STORED_Q_FILE)
+        else:
+            q_values = q_iteration.q_iteration(env=self.env, num_itrs=200, discount=0.99)
+            np.save(STORED_Q_FILE, q_values)
 
         if max(q_values[start_idx]) == 0:
             # no path between start and goal was found!

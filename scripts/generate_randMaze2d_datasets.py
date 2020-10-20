@@ -40,7 +40,7 @@ def npify(data):
 
 
 def sample_env_and_controller(args):
-    layout_str = maze_layouts.rand_layout(args.rand_maze_size)
+    layout_str = maze_layouts.rand_layout(seed=np.random.randint(1e12), size=args.rand_maze_size)
     env = maze_model.MazeEnv(layout_str, agent_centric_view=args.agent_centric)
     controller = waypoint_controller.WaypointController(layout_str)
     return env, controller
@@ -49,6 +49,7 @@ def sample_env_and_controller(args):
 def reset_env(env, agent_centric=False):
     s = env.reset()
     env.set_target()
+    env.step(np.zeros((2,)))
     if agent_centric:
         [env.render(mode='rgb_array') for _ in range(100)]    # so that camera can catch up with agent
     return s
@@ -133,7 +134,17 @@ def main():
 
 
 def save_data(args, data, idx):
-    # save_video("seq_{}_ac.mp4".format(idx), data['images'])
+    ### SAVE VIDEO ###
+    # save_video("maze_demo_{}.mp4".format(idx), data['images'][1:], fps=35)
+    # return
+
+    ### SAVE INDIVIDUAL IMAGES
+    # import cv2
+    # for i, img in enumerate(data['images']):
+    #     print(img.shape)
+    #     cv2.imwrite('maze_image_{}.png'.format(i), img[..., ::-1])
+    # exit(0)
+
     dir_name = 'maze2d-%s-noisy' % args.maze if args.noisy else 'maze2d-%s' % args.maze
     if args.batch_idx >= 0:
         dir_name = os.path.join(dir_name, "batch_{}".format(args.batch_idx))

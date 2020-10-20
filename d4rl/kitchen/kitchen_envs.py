@@ -97,6 +97,10 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         """Loads goal state from dataset for goal-conditioned approaches (like RPL)."""
         raise NotImplementedError
 
+    def set_state(self, qpos):
+        self.robot.reset(self, qpos, np.zeros_like(self.init_qvel))
+        self.sim.forward()
+
     def _split_data_into_seqs(self, data):
         """Splits dataset object into list of sequence dicts."""
         seq_end_idxs = np.where(data['terminals'])[0]

@@ -202,7 +202,7 @@ class KitchenTaskRelaxV1(KitchenV0):
             #camera = engine.MovableCamera(self.sim, 1920, 2560)
             #camera.set_pose(distance=2.2, lookat=[-0.2, .5, 2.], azimuth=70, elevation=-35)
             render_device = os.environ.get("CUDA_VISIBLE_DEVICES") if os.environ.get("CUDA_VISIBLE_DEVICES") is not None else -1
-            img = self.sim.render(400, 400, device_id=render_device)[::-1] #camera.render()
+            img = self.sim.render(1024, 1024, device_id=render_device)[::-1] #camera.render()
             #img = camera.render()
             return img
         else:

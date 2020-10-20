@@ -56,15 +56,15 @@ def point_maze(maze_str):
     visual.quality(shadowsize=2048)
 
     worldbody = mjcmodel.root.worldbody()
-    worldbody.geom(name='ground',size="40 40 0.25",pos="0 0 -0.1",type="plane",contype=1,conaffinity=0,material="groundplane")
+    worldbody.geom(name='ground',size="60 60 0.25",pos="0 0 -0.1",type="plane",contype=1,conaffinity=0,material="groundplane")
 
     particle = worldbody.body(name='particle', pos=[1.2,1.2,0])
     particle.geom(name='particle_geom', type='sphere', size=0.1, rgba='0.0 0.0 1.0 0.0', contype=1)
-    particle.site(name='particle_site', pos=[0.0,0.0,0], size=0.2, rgba='0.3 0.6 0.3 1')
+    particle.site(name='particle_site', pos=[0.0,0.0,0], size=0.6, rgba='0.3 0.6 0.3 1')
     particle.joint(name='ball_x', type='slide', pos=[0,0,0], axis=[1,0,0])
     particle.joint(name='ball_y', type='slide', pos=[0,0,0], axis=[0,1,0])
 
-    worldbody.site(name='target_site', pos=[0.0,0.0,0], size=0.2, material='target')
+    worldbody.site(name='target_site', pos=[0.0,0.0,0], size=0.8, material='target')
 
     width, height = maze_arr.shape
     for w in range(width):
@@ -83,13 +83,13 @@ def point_maze(maze_str):
 
     # for topdown rendering
     # worldbody.camera(mode="fixed", name="birdview", pos="11.5 11.5 29.0", quat="0.7071 0 0 0.7071")
-    # worldbody.camera(mode="fixed", name="birdview", pos="21.5 21.5 49.0", quat="0.7071 0 0 0.7071")
+    worldbody.camera(mode="fixed", name="birdview", pos="21.5 21.5 49.0", quat="0.7071 0 0 0.7071")
 
     return mjcmodel
 
 
 class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
-    AGENT_CENTRIC_RES = 32
+    AGENT_CENTRIC_RES = 32   # 512
     def __init__(self,
                  maze_spec=U_MAZE,
                  reward_type='dense',
@@ -145,6 +145,8 @@ class MazeEnv(mujoco_env.MujocoEnv, utils.EzPickle, offline_env.OfflineEnv):
             if 'width' not in kwargs and 'height' not in kwargs:
                 kwargs['width'] = self.AGENT_CENTRIC_RES
                 kwargs['height'] = self.AGENT_CENTRIC_RES
+        else:
+            kwargs['camera_name'] = 'birdview'
         return super().render(mode, *args, **kwargs)
 
     def _get_obs(self):

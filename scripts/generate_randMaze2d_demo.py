@@ -111,10 +111,8 @@ def main():
             ts = 0
             continue
 
-        print(act)
-
         if args.noisy:
-            act = act + np.random.randn(*act.shape)*0.5
+            act = act + np.random.randn(*act.shape)*1.0 #0.5
 
         act = np.clip(act, -1.0, 1.0)
         if ts >= max_episode_steps:
@@ -129,7 +127,8 @@ def main():
             if len(data['actions']) > args.min_traj_len:
                 save_data(args, data, cnt)
                 print("Saved Demonstration. Exiting...")
-                exit(0)
+                cnt += 1
+                # exit(0)
             data = reset_data()
             env, controller = sample_env_and_controller(args)
             s = reset_env(env, agent_centric=args.agent_centric)
