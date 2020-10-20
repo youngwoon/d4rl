@@ -113,6 +113,10 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         return seqs
 
 
+class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+
+
 class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'slide cabinet']
 
@@ -120,32 +124,3 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
         data = self.get_dataset()
         seqs = self._split_data_into_seqs(data)
         return seqs[1]['states'][-1]
-
-
-class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
-    # TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
-    #TASK_ELEMENTS = ['bottom burner', 'microwave', 'kettle', 'light switch']
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'light switch']
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'slide cabinet']
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'hinge cabinet']
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'top burner']
-    #TASK_ELEMENTS = ['light switch', 'top burner', 'microwave', 'kettle']
-    #TASK_ELEMENTS = ['light switch', 'slide cabinet', 'microwave', 'kettle']
-    #TASK_ELEMENTS = ['hinge cabinet', 'light switch', 'top burner', 'slide cabinet']
-    #TASK_ELEMENTS = ['hinge cabinet', 'slide cabinet', 'microwave', 'kettle']
-    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'slide cabinet', 'hinge cabinet']
-    #TASK_ELEMENTS = ['kettle', 'bottom burner', 'slide cabinet', 'hinge cabinet']
-
-    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'kettle', 'light switch', 'slide cabinet', 'hinge cabinet']
-    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'light switch', 'slide cabinet', 'hinge cabinet', 'kettle']
-    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'slide cabinet', 'hinge cabinet', 'light switch', 'kettle']
-    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'kettle', 'slide cabinet', 'top burner', 'hinge cabinet']
-
-    #TASK_ELEMENTS = ['light switch', 'top burner', 'slide cabinet', 'hinge cabinet']
-    #TASK_ELEMENTS = ['bottom burner']
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet']
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet', 'bottom burner', 'light switch', 'top burner']
-    print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("Kitchen Env task is modified!")
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
-    TASK_ELEMENTS = ['microwave', 'kettle', 'hinge cabinet', 'light switch']
