@@ -73,7 +73,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
                 next_obj_obs[..., element_idx - idx_offset] -
                 next_goal[element_idx])
             complete = distance < BONUS_THRESH
-            if complete: # and all_completed_so_far: #element == self.tasks_to_complete[0]:
+            if complete and all_completed_so_far: #element == self.tasks_to_complete[0]:
                 completions.append(element)
             all_completed_so_far = all_completed_so_far and complete
         if self.REMOVE_TASKS_WHEN_COMPLETE:
@@ -114,7 +114,13 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
 
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
-    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+    print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print("Kitchen Env task is modified!")
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'hinge cabinet']
+    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'slide cabinet']
+    TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
 
 
 class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
