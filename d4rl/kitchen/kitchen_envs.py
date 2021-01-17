@@ -114,13 +114,13 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
 
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
-    print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    print("Kitchen Env task is modified!")
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+    #print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    #print("Kitchen Env task is modified!")
+    #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
     #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'hinge cabinet']
     #TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'slide cabinet']
-    TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
+    #TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
 
 
 class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
