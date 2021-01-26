@@ -31,8 +31,10 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
     # A string of element names. The robot's task is then to modify each of
     # these elements appropriately.
     TASK_ELEMENTS = []
+    ALL_TASKS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet', 'hinge cabinet', 'microwave', 'kettle']
     REMOVE_TASKS_WHEN_COMPLETE = True
     TERMINATE_ON_TASK_COMPLETE = True
+    TERMINATE_ON_WRONG_COMPLETE = False
 
     def __init__(self, dataset_url=None, ref_max_score=None, ref_min_score=None, **kwargs):
         self.tasks_to_complete = list(self.TASK_ELEMENTS)
@@ -88,6 +90,15 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         obs, reward, done, env_info = super(KitchenBase, self).step(a, b=b)
         if self.TERMINATE_ON_TASK_COMPLETE:
             done = not self.tasks_to_complete
+        if self.TERMINATE_ON_WRONG_COMPLETE:
+            all_goal = self._get_task_goal(task=self.ALL_TASKS)
+            for wrong_task in list(set(self.ALL_TASKS) - set(self.TASK_ELEMENTS)):
+                element_idx = OBS_ELEMENT_INDICES[wrong_task]
+                distance = np.linalg.norm(obs[..., element_idx] - all_goal[element_idx])
+                complete = distance < BONUS_THRESH
+                if complete: 
+                    done = True
+                    break
         env_info['completed_tasks'] = set(self.TASK_ELEMENTS) - set(self.tasks_to_complete)
         return obs, reward, done, env_info
 
@@ -114,13 +125,18 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
 
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
     print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     print("Kitchen Env task is modified!")
     print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
     #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'hinge cabinet']
     #TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'slide cabinet']
-    TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
+    #TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
+    #TASK_ELEMENTS = ['microwave', 'light switch', 'slide cabinet', 'hinge cabinet']
+    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet']
+    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'hinge cabinet', 'top burner']
+    #TASK_ELEMENTS = ['kettle', 'top burner', 'light switch', 'slide cabinet']
+    #TASK_ELEMENTS = ['kettle', 'light switch', 'slide cabinet', 'hinge cabinet']
 
 
 class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
