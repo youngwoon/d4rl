@@ -126,7 +126,7 @@ def main():
 
     layout, skill_boundaries = SEMANTIC_MAZE_LAYOUTS[args.layout_id]
 
-    max_episode_steps = 200 #1600 if not args.save_images else 500
+    max_episode_steps = 1600 if not args.save_images else 500
     env, controller = sample_env_and_controller(args, layout)
 
     s = reset_env(env, agent_centric=args.agent_centric)
