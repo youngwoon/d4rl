@@ -160,7 +160,7 @@ def main():
             # fill all skills that were filled with None before
             fill_skills(data, skill)
         append_data(data, s, act, env.render(mode='rgb_array'), #, camera_name='birdview'),
-                    env._target, done, skill, env.sim.data)
+                    env._target, done, skill if skill is None else SKILL2ID[skill], env.sim.data)
 
         ns, _, _, _ = env.step(act)
 
