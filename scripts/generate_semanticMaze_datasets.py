@@ -94,6 +94,15 @@ def fill_skills(data, skill):
             break
 
 
+def pad_skills(data):
+    """Fill all trailing None with last non-None skill."""
+    for i in reversed(range(len(data['skills']))):
+        if data['skills'][i] is not None:
+            break
+        for k in range(i, len(data['skills'])):
+            data['skills'][k] = data['skills'][i]
+
+
 def save_video(file_name, frames, fps=20, video_format='mp4'):
     import skvideo.io
     skvideo.io.vwrite(
@@ -167,7 +176,7 @@ def main():
         ts += 1
         if done:
             # fill final skill segment with goal reaching skill
-            fill_skills(data, str(last_room_id))
+            fill_skills(data, str(last_room_id)) if last_room_id != -1 else pad_skills(data)
 
             if len(data['actions']) > args.min_traj_len:
                 save_data(args, data, cnt)
