@@ -1,6 +1,7 @@
 from .maze_layouts import OPEN, U_MAZE, MEDIUM_MAZE, LARGE_MAZE, U_MAZE_EVAL, MEDIUM_MAZE_EVAL, LARGE_MAZE_EVAL, \
             HARD_EXP_MAZE, HARD_EXP_MAZE_V2, rand_layout
 from .maze_model import MazeEnv
+from .semantic_maze_layouts import SEMANTIC_MAZE_LAYOUTS, semantic_layout2str
 
 from gym.envs.registration import register
 
@@ -282,6 +283,38 @@ register(
     kwargs={
         'maze_spec': rand_layout(seed=0, size=40),
         'agent_centric_view': True,
+        'reward_type': 'sparse',
+        'reset_target': False,
+        'ref_min_score': 4.83,
+        'ref_max_score': 191.99,
+        'dataset_url':'http://maze2d-hardexpv2-sparse.hdf5'
+    }
+)
+
+
+##################### SEMANTIC MAZE LAYOUTS #############
+register(
+    id='maze2d-semanticMaze1-v0',
+    entry_point='d4rl.pointmaze:MazeEnv',
+    max_episode_steps=800,
+    kwargs={
+        'maze_spec': semantic_layout2str(SEMANTIC_MAZE_LAYOUTS[1][0]),
+        'agent_centric_view': False,
+        'reward_type': 'sparse',
+        'reset_target': False,
+        'ref_min_score': 4.83,
+        'ref_max_score': 191.99,
+        'dataset_url':'http://maze2d-hardexpv2-sparse.hdf5'
+    }
+)
+
+register(
+    id='maze2d-semanticMaze2-v0',
+    entry_point='d4rl.pointmaze:MazeEnv',
+    max_episode_steps=800,
+    kwargs={
+        'maze_spec': semantic_layout2str(SEMANTIC_MAZE_LAYOUTS[2][0]),
+        'agent_centric_view': False,
         'reward_type': 'sparse',
         'reset_target': False,
         'ref_min_score': 4.83,
