@@ -11,6 +11,15 @@ import os
 import tqdm
 
 
+# Demos Semantic Maze 1
+START_POS = np.array([5., 5.])
+TARGET_POS = np.array([37., 20.])
+
+# Demos Semantic Maze 2
+# START_POS = np.array([36., 34.])
+# TARGET_POS = np.array([3., 23.])
+
+
 def reset_data():
     return {'states': [],
             'actions': [],
@@ -51,7 +60,9 @@ def sample_env_and_controller(args, layout):
 
 def reset_env(env, agent_centric=False):
     s = env.reset()
-    env.set_target()
+    #env.set_target()
+    env.set_target(TARGET_POS)
+    s = env.reset_to_location(START_POS)
     if agent_centric:
         [env.render(mode='rgb_array') for _ in range(100)]    # so that camera can catch up with agent
     return s
