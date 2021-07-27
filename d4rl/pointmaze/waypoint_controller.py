@@ -80,6 +80,7 @@ class WaypointController(object):
         waypoints = []
         for i in range(max_ts):
             a = np.argmax(q_values[s])
+            #a = np.random.choice(np.where(q_values[s] == q_values[s].max())[0])
             new_s, reward = self.env.step_stateless(s, a)
 
             waypoint = self.env.gs.idx_to_xy(new_s)
