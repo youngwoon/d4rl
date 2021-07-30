@@ -126,17 +126,16 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
-    #print("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-    #print("Kitchen Env task is modified!")
-    #print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'hinge cabinet']
-    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'slide cabinet']
-    #TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
-    #TASK_ELEMENTS = ['microwave', 'light switch', 'slide cabinet', 'hinge cabinet']
-    #TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet']
-    #TASK_ELEMENTS = ['microwave', 'bottom burner', 'hinge cabinet', 'top burner']
-    #TASK_ELEMENTS = ['kettle', 'top burner', 'light switch', 'slide cabinet']
-    #TASK_ELEMENTS = ['kettle', 'light switch', 'slide cabinet', 'hinge cabinet']
+
+
+class KitchenKettleBottomBurnerTopBurnerSliderV0(KitchenBase):
+    # well-aligned SkiLD task
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'top burner', 'slide cabinet']
+
+
+class KitchenMicrowaveLightSliderHingeV0(KitchenBase):
+    # mis-aligned SkiLD task
+    TASK_ELEMENTS = ['microwave', 'light switch', 'slide cabinet', 'hinge cabinet']
 
 
 class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
