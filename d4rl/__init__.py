@@ -22,6 +22,7 @@ except ImportError as e:
 
 try:
     import d4rl.kitchen
+    import d4rl.kitchen_2
 except ImportError as e:
     if not SUPPRESS_MESSAGES:
         print(_ERROR_MESSAGE % 'FrankaKitchen', file=sys.stderr)
