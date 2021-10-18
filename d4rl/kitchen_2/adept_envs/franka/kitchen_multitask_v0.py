@@ -31,7 +31,8 @@ class KitchenV0(robot_env.RobotEnv):
         os.path.join(os.path.dirname(__file__), 'robot/franka_config.xml')
     }
     # Converted to velocity actuation
-    ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.franka_robot:Robot_VelAct'}
+    # ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.franka_robot:Robot_VelAct'}
+    ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.osp_control_franka_robot:Robot_OSPControl'}
     MODEl = os.path.join(
         os.path.dirname(__file__),
         '../franka/assets/franka_kitchen_jntpos_act_ab.xml')
@@ -86,10 +87,11 @@ class KitchenV0(robot_env.RobotEnv):
         raise NotImplementedError()
 
     def step(self, a, b=None):
-        a = np.clip(a, -1.0, 1.0)
+        # a = np.clip(a, -1.0, 1.0)
 
         if not self.initializing:
-            a = self.act_mid + a * self.act_amp  # mean center and scale
+            # a = self.act_mid + a * self.act_amp  # mean center and scale
+            pass
         else:
             self.goal = self._get_task_goal()  # update goal if init
 

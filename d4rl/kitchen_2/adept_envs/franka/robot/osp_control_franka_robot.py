@@ -12,6 +12,7 @@ class Robot_OSPControl(Robot_VelAct):
 
     def step(self, env, ctrl_desired, step_duration, sim_override=False):
         """ctrl_desired is assumed to be desired delta in EEF position and orientation (6-dim). + 1 dim for gripper."""
+        assert ctrl_desired.shape[0] == 7       # 6-dim target pose, 1-dim gripper open/close
         if self._controller is None:
             self.make_controller(env.sim)
 
@@ -43,12 +44,13 @@ class Robot_OSPControl(Robot_VelAct):
         config["sim"] = sim
         config["eef_name"] = "end_effector"
         config["joint_indexes"] = {
-            "joints": np.arrange(7),
-            "qpos": np.arrange(7),
-            "qvel": np.arrange(7),
+            "joints": np.arange(7),
+            "qpos": np.arange(7),
+            "qvel": np.arange(7),
         }
         config["policy_freq"] = 30
         config["ndim"] = 7
+        config["actuator_range"] = self.torque_limits(sim)
         self._controller = controller_factory(config["type"], config)
 
     def _run_controller(self, target_pose, sim):
@@ -66,7 +68,7 @@ class Robot_OSPControl(Robot_VelAct):
 
     def torque_limits(self, sim):
         # Torque limit values pulled from relevant robot.xml file
-        low = sim.model.actuator_ctrlrange[np.arrange(7), 0]
-        high = sim.model.actuator_ctrlrange[np.arrange(7), 1]
+        low = sim.model.actuator_ctrlrange[np.arange(7), 0]
+        high = sim.model.actuator_ctrlrange[np.arange(7), 1]
         return low, high
 
