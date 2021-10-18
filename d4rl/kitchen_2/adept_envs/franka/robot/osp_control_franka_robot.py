@@ -12,7 +12,11 @@ class Robot_OSPControl(Robot_VelAct):
 
     def step(self, env, ctrl_desired, step_duration, sim_override=False):
         """ctrl_desired is assumed to be desired delta in EEF position and orientation (6-dim). + 1 dim for gripper."""
+        if env.initializing:
+            # during initialization mujoco_env will send in 9-dim action once
+            ctrl_desired = ctrl_desired[:7]
         assert ctrl_desired.shape[0] == 7       # 6-dim target pose, 1-dim gripper open/close
+
         if self._controller is None:
             self.make_controller(env.sim)
 
