@@ -2,10 +2,13 @@ import numpy as np
 
 from d4rl.kitchen_2.adept_envs.franka.robot.franka_robot import Robot_VelAct
 from robosuite.controllers.controller_factory import load_controller_config, controller_factory
+import robosuite.utils.transform_utils as T
 
 
-class Robot_OSPControl(Robot_VelAct):
-    """Wraps robot control in operation space controller that maps from EEF pose deltas to joint velocities."""
+class Robot_RobosuiteControl(Robot_VelAct):
+    """Provides interface for using robosuite controllers with Franka robot."""
+    CONTROLLER = None       # should be set by subclasses to determine controller type
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._controller = None
@@ -43,7 +46,14 @@ class Robot_OSPControl(Robot_VelAct):
         self._controller = None
 
     def make_controller(self, sim):
-        config = load_controller_config(default_controller="OSC_POSE")
+        config = self._get_controller_config(sim)
+        self._controller = controller_factory(config["type"], config)
+        base_pos = sim.data.get_body_xpos("panda0_link0")
+        base_ori = T.mat2quat(sim.data.get_body_xmat("panda0_link0").reshape((3, 3)))
+        self._controller.update_base_pose(base_pos, base_ori)
+
+    def _get_controller_config(self, sim):
+        config = load_controller_config(default_controller=self.CONTROLLER)
         config["robot_name"] = "franka"
         config["sim"] = sim
         config["eef_name"] = "end_effector"
@@ -55,7 +65,7 @@ class Robot_OSPControl(Robot_VelAct):
         config["policy_freq"] = 30
         config["ndim"] = 7
         config["actuator_range"] = self.torque_limits(sim)
-        self._controller = controller_factory(config["type"], config)
+        return config
 
     def _run_controller(self, target_pose, sim):
         self._controller.set_goal(target_pose)
@@ -75,4 +85,20 @@ class Robot_OSPControl(Robot_VelAct):
         low = sim.model.actuator_ctrlrange[np.arange(7), 0]
         high = sim.model.actuator_ctrlrange[np.arange(7), 1]
         return low, high
+
+
+class Robot_OSPControl(Robot_RobosuiteControl):
+    """Wraps robot control in operation space controller that maps from EEF pose deltas to torques."""
+    CONTROLLER = "OSC_POSE"
+
+
+class Robot_IKControl(Robot_RobosuiteControl):
+    """Wraps robot control in inverse kinematics controller that maps from EEF pose deltas to joint velocities."""
+    CONTROLLER = "IK_POSE"
+
+    def _get_controller_config(self, sim):
+        config = super()._get_controller_config(sim)
+        config['eef_rot_offset'] = np.asarray([0., 0., -0.38268343, 0.9238795]) #[0., 0., 0., 1.])  # EULER equivalent: [0, 0, -pi/4]
+        config["robot_name"] = "Panda"
+        return config
 

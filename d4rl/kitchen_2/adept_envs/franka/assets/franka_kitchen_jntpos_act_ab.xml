@@ -41,6 +41,44 @@
         <weld body1="vive_controller" body2="world" solref="0.02 1" solimp=".7 .95 0.050"/>
     </equality>
 
+
+<!--    <actuator>-->
+<!--        &lt;!&ndash; Physical limits of the actuator. &ndash;&gt;-->
+<!--        <motor ctrllimited="true" ctrlrange="-80.0 80.0" joint="joint1" name="torq_j1"/>-->
+<!--        <motor ctrllimited="true" ctrlrange="-80.0 80.0" joint="joint2" name="torq_j2"/>-->
+<!--        <motor ctrllimited="true" ctrlrange="-80.0 80.0" joint="joint3" name="torq_j3"/>-->
+<!--        <motor ctrllimited="true" ctrlrange="-80.0 80.0" joint="joint4" name="torq_j4"/>-->
+<!--        <motor ctrllimited="true" ctrlrange="-80.0 80.0" joint="joint5" name="torq_j5"/>-->
+<!--        <motor ctrllimited="true" ctrlrange="-12.0 12.0" joint="joint6" name="torq_j6"/>-->
+<!--        <motor ctrllimited="true" ctrlrange="-12.0 12.0" joint="joint7" name="torq_j7"/>-->
+<!--        <position ctrllimited="true" ctrlrange="0.0 0.04" joint="finger_joint1" kp="1000" name="gripper_finger_joint1" forcelimited="true" forcerange="-20 20"/>-->
+<!--        <position ctrllimited="true" ctrlrange="-0.04 0.0" joint="finger_joint2" kp="1000" name="gripper_finger_joint2" forcelimited="true" forcerange="-20 20"/>-->
+<!--    </actuator>-->
+<!--    <asset>-->
+<!--        <mesh name="link0" file="../../third_party/panda/meshes/link0.stl" />-->
+<!--        <mesh name="link1" file="../../third_party/panda/meshes/link1.stl" />-->
+<!--        <mesh name="link2" file="../../third_party/panda/meshes/link2.stl" />-->
+<!--        <mesh name="link3" file="../../third_party/panda/meshes/link3.stl" />-->
+<!--        <mesh name="link4" file="../../third_party/panda/meshes/link4.stl" />-->
+<!--        <mesh name="link5" file="../../third_party/panda/meshes/link5.stl" />-->
+<!--        <mesh name="link6" file="../../third_party/panda/meshes/link6.stl" />-->
+<!--        <mesh name="link7" file="../../third_party/panda/meshes/link7.stl" />-->
+<!--        <mesh name="link0_vis" file="../../third_party/panda/meshes/link0_vis.stl" />-->
+<!--        <mesh name="link1_vis" file="../../third_party/panda/meshes/link1_vis.stl" />-->
+<!--        <mesh name="link2_vis" file="../../third_party/panda/meshes/link2_vis.stl" />-->
+<!--        <mesh name="link3_vis" file="../../third_party/panda/meshes/link3_vis.stl" />-->
+<!--        <mesh name="link4_vis" file="../../third_party/panda/meshes/link4_vis.stl" />-->
+<!--        <mesh name="link5_vis" file="../../third_party/panda/meshes/link5_vis.stl" />-->
+<!--        <mesh name="link6_vis" file="../../third_party/panda/meshes/link6_vis.stl" />-->
+<!--        <mesh name="link7_vis" file="../../third_party/panda/meshes/link7_vis.stl" />-->
+<!--        <mesh name="hand" file="../../third_party/panda/meshes/panda_gripper/hand.stl" />-->
+<!--        <mesh name="hand_vis" file="../../third_party/panda/meshes/panda_gripper/hand_vis.stl" />-->
+<!--        <mesh name="finger" file="../../third_party/panda/meshes/panda_gripper/finger.stl" />-->
+<!--        <mesh name="finger_vis" file="../../third_party/panda/meshes/panda_gripper/finger_vis.stl" />-->
+<!--        <mesh name="finger_vis2" file="../../third_party/panda/meshes/panda_gripper/finger_longer.stl" />-->
+<!--    </asset>-->
+
+
     <worldbody>
 
         <!-- Mocap -->
@@ -53,9 +91,10 @@
         <camera name='right_cap' pos='1.2 -0.5 1.8' quat='0.76 0.5 0.21 0.35'/>
 
         <!-- Robot -->
-        <body pos='0. 0 1.8' euler='0 0 1.57'>
+        <body pos='0. 0 1.8' euler='0 0 1.57'> -->
             <geom type='cylinder' size='.120 .90' pos='-.04 0 -0.90' class='panda_viz'/>
             <include file="../../../third_party/franka/assets/chain0.xml"/>
+<!--            <include file="../../../third_party/panda/robot.xml"/>-->
         </body>
 
         <body name='desk' pos='-0.1 0.75 0'>

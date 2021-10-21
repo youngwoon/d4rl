@@ -17,8 +17,8 @@
 
 import os
 import numpy as np
-from d4rl.kitchen.adept_envs import robot_env
-from d4rl.kitchen.adept_envs.utils.configurable import configurable
+from d4rl.kitchen_2.adept_envs import robot_env
+from d4rl.kitchen_2.adept_envs.utils.configurable import configurable
 from gym import spaces
 from dm_control.mujoco import engine
 import mujoco_py    # for GPU-speccific rendering
@@ -32,7 +32,7 @@ class KitchenV0(robot_env.RobotEnv):
     }
     # Converted to velocity actuation
     # ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.franka_robot:Robot_VelAct'}
-    ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.osp_control_franka_robot:Robot_OSPControl'}
+    ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.robosuite_control_franka_robot:Robot_IKControl'}
     MODEl = os.path.join(
         os.path.dirname(__file__),
         '../franka/assets/franka_kitchen_jntpos_act_ab.xml')
@@ -52,10 +52,16 @@ class KitchenV0(robot_env.RobotEnv):
                 n_obj=self.N_DOF_OBJECT,
                 **robot_params),
             frame_skip=frame_skip,
+            # camera_settings=dict(
+            #     distance=4.5,
+            #     azimuth=-66,
+            #     elevation=-65,
+            # ),
             camera_settings=dict(
-                distance=4.5,
-                azimuth=-66,
-                elevation=-65,
+                lookat=[-0.2, 0.5, 2.0],
+                distance=3.2,
+                azimuth=70,
+                elevation=-35,
             ),
         )
         self.init_qpos = self.sim.model.key_qpos[0].copy()
@@ -69,6 +75,13 @@ class KitchenV0(robot_env.RobotEnv):
                                    -6.44129196e-03, -1.77048263e-03,  1.08009684e-03, -2.69397440e-01,
                                     3.50383255e-01,  1.61944683e+00,  1.00618764e+00,  4.06395120e-03,
                                    -6.62095997e-03, -2.68278933e-04])
+        # self.init_qpos = np.array([1., 1., 1., 1., 1., 1., 1., 4.79267505e-02,
+        #                            3.71350919e-02, -2.66279850e-04, -5.18043486e-05, 3.12877220e-05,
+        #                            -4.51199853e-05, -3.90842156e-06, -4.22629655e-05, 6.28065475e-05,
+        #                            4.04984708e-05, 4.62730939e-04, -2.26906415e-04, -4.65501369e-04,
+        #                            -6.44129196e-03, -1.77048263e-03, 1.08009684e-03, -2.69397440e-01,
+        #                            3.50383255e-01, 1.61944683e+00, 1.00618764e+00, 4.06395120e-03,
+        #                            -6.62095997e-03, -2.68278933e-04])
 
         self.init_qvel = self.sim.model.key_qvel[0].copy()
 
@@ -208,4 +221,12 @@ class KitchenTaskRelaxV1(KitchenV0):
             #img = camera.render()
             return img
         else:
+            if not hasattr(self, "viewer"):
+                self.viewer = mujoco_py.MjRenderContextOffscreen(self.sim, -1)
+                self.viewer.cam.lookat[0] = -0.2
+                self.viewer.cam.lookat[1] = .5
+                self.viewer.cam.lookat[2] = 2.
+                self.viewer.cam.distance = 2.2
+                self.viewer.cam.azimuth = 70
+                self.viewer.cam.elevation = -35
             super(KitchenTaskRelaxV1, self).render()
