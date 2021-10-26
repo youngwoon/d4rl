@@ -173,6 +173,56 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
         seqs = self._split_data_into_seqs(data)
         return seqs[1]['states'][-1]
 
+
+# SINGLE TASK -- FIXED ENVS
+
+class KitchenBottomBurnerV0(KitchenBase):
+    TASK_ELEMENTS = ['bottom burner']
+
+class KitchenTopBurnerV0(KitchenBase):
+    TASK_ELEMENTS = ['top burner']
+
+class KitchenLightSwitchV0(KitchenBase):
+    TASK_ELEMENTS = ['light switch']
+
+class KitchenSlideCabinetV0(KitchenBase):
+    TASK_ELEMENTS = ['slide cabinet']
+
+class KitchenHingeCabinetV0(KitchenBase):
+    TASK_ELEMENTS = ['hinge cabinet']
+
+class KitchenMicrowaveV0(KitchenBase):
+    TASK_ELEMENTS = ['microwave']
+
+class KitchenKettleV0(KitchenBase):
+    TASK_ELEMENTS = ['kettle']
+
+
+# SINGLE TASK -- RANDOMIZED START ENVS
+
+class KitchenBottomBurnerRandV0(KitchenRand):
+    TASK_ELEMENTS = ['bottom burner']
+
+
+class KitchenTopBurnerRandV0(KitchenRand):
+    TASK_ELEMENTS = ['top burner']
+
+
+class KitchenLightSwitchRandV0(KitchenRand):
+    TASK_ELEMENTS = ['light switch']
+
+
+class KitchenSlideCabinetRandV0(KitchenRand):
+    TASK_ELEMENTS = ['slide cabinet']
+
+
+class KitchenHingeCabinetRandV0(KitchenRand):
+    TASK_ELEMENTS = ['hinge cabinet']
+
+
 class KitchenMicrowaveRandV0(KitchenRand):
     TASK_ELEMENTS = ['microwave']
 
+
+class KitchenKettleRandV0(KitchenRand):
+    TASK_ELEMENTS = ['kettle']
