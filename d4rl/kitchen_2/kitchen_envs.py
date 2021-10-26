@@ -7,8 +7,8 @@ from d4rl.kitchen_2.adept_envs.franka.kitchen_multitask_v0 import KitchenTaskRel
 from d4rl.offline_env import OfflineEnv
 
 OBS_ELEMENT_INDICES = {
-    'bottom burner': np.array([11, 12]),
-    'top burner': np.array([15, 16]),
+    'bottom burner': np.array([9, 10]), # (from 11, 12)
+    'top burner': np.array([13, 14]), # (from 15, 16)
     'light switch': np.array([17, 18]),
     'slide cabinet': np.array([19]),
     'hinge cabinet': np.array([20, 21]),
@@ -20,9 +20,9 @@ OBS_ELEMENT_GOALS = {
     'top burner': np.array([-0.92, -0.01]),
     'light switch': np.array([-0.69, -0.05]),
     'slide cabinet': np.array([0.37]),
-    'hinge cabinet': np.array([0., 1.45]),
+    'hinge cabinet': np.array([-1.2, 0]), # (from np.array([0., 1.45]),)
     'microwave': np.array([-0.75]),
-    'kettle': np.array([-0.23, 0.75, 1.62, 0.99, 0., 0., -0.06]),
+    'kettle': np.array([-0.27, 0.75, 1.62, 0.99, 0., 0., -0.06]), # from [-0.23, ...]
     }
 BONUS_THRESH = 0.3
 

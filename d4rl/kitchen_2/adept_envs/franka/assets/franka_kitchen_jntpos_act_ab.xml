@@ -91,7 +91,7 @@
         <camera name='right_cap' pos='1.2 -0.5 1.8' quat='0.76 0.5 0.21 0.35'/>
 
         <!-- Robot -->
-        <body pos='0.45 0 1.8' euler='0 0 0'> -->
+        <body pos='0.55 0 1.8' euler='0 0 0'> -->
             <geom type='cylinder' size='.120 .90' pos='-.04 0 -0.90' class='panda_viz'/>
             <include file="../../../third_party/franka/assets/chain0.xml"/>
 <!--            <include file="../../../third_party/panda/robot.xml"/>-->
