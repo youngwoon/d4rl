@@ -31,8 +31,9 @@ class KitchenV0(robot_env.RobotEnv):
         os.path.join(os.path.dirname(__file__), 'robot/franka_config.xml')
     }
     # Converted to velocity actuation
-    # ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.franka_robot:Robot_VelAct'}
-    ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.robosuite_control_franka_robot:Robot_IKControl'}
+    ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.franka_robot:Robot_VelAct'}
+    # ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.franka_robot:Robot_PosAct'}
+    # ROBOTS = {'robot': 'd4rl.kitchen_2.adept_envs.franka.robot.robosuite_control_franka_robot:Robot_IKControl'}
     MODEl = os.path.join(
         os.path.dirname(__file__),
         '../franka/assets/franka_kitchen_jntpos_act_ab.xml')
@@ -66,22 +67,20 @@ class KitchenV0(robot_env.RobotEnv):
         )
         self.init_qpos = self.sim.model.key_qpos[0].copy()
 
-        # For the microwave kettle slide hinge
-        self.init_qpos = np.array([ 1.48388023e-01, -1.76848573e+00,  1.84390296e+00, -2.47685760e+00,
-                                    2.60252026e-01,  7.12533105e-01,  1.59515394e+00,  4.79267505e-02,
-                                    3.71350919e-02, -2.66279850e-04, -5.18043486e-05,  3.12877220e-05,
-                                   -4.51199853e-05, -3.90842156e-06, -4.22629655e-05,  6.28065475e-05,
-                                    4.04984708e-05,  4.62730939e-04, -2.26906415e-04, -4.65501369e-04,
-                                   -6.44129196e-03, -1.77048263e-03,  1.08009684e-03, -2.69397440e-01,
-                                    3.50383255e-01,  1.61944683e+00,  1.00618764e+00,  4.06395120e-03,
-                                   -6.62095997e-03, -2.68278933e-04])
-        # self.init_qpos = np.array([1., 1., 1., 1., 1., 1., 1., 4.79267505e-02,
-        #                            3.71350919e-02, -2.66279850e-04, -5.18043486e-05, 3.12877220e-05,
-        #                            -4.51199853e-05, -3.90842156e-06, -4.22629655e-05, 6.28065475e-05,
-        #                            4.04984708e-05, 4.62730939e-04, -2.26906415e-04, -4.65501369e-04,
-        #                            -6.44129196e-03, -1.77048263e-03, 1.08009684e-03, -2.69397440e-01,
-        #                            3.50383255e-01, 1.61944683e+00, 1.00618764e+00, 4.06395120e-03,
-        #                            -6.62095997e-03, -2.68278933e-04])
+        # Initialize to proper init position
+        self.init_qpos = np.array([-np.pi / 2, np.pi / 2, 3 * np.pi / 8, -5 * np.pi / 8,
+                                   0, np.pi / 2, np.pi / 2, 4.79267505e-02, 3.71350919e-02,  # ROBOT
+
+                                   -2.66279850e-04, -5.18043486e-05, # BB1
+                                    3.12877220e-05, -4.51199853e-05, # BB2
+                                   -3.90842156e-06, -4.22629655e-05, # TB1
+                                    6.28065475e-05, 4.04984708e-05,  # TB2
+                                    4.62730939e-04, -2.26906415e-04, # LS
+                                   -4.65501369e-04, # SLIDE
+                                   -6.44129196e-03, -1.77048263e-03, # HINGE (left, right)
+                                    1.08009684e-03, # MICROWAVE
+                                   -2.69397440e-01, 3.50383255e-01, 1.61944683e+00, 1.00618764e+00, 4.06395120e-03,
+                                   -6.62095997e-03, -2.68278933e-04]) # KETTLE
 
         self.init_qvel = self.sim.model.key_qvel[0].copy()
 

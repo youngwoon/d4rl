@@ -124,6 +124,33 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         return seqs
 
 
+class KitchenRand(KitchenBase):
+    """Randomly initializes agent + environment (except for target objects)."""
+    def reset_model(self):
+        reset_pos = self.init_qpos[:].copy()
+
+        # randomly sample joints & gripper position
+        joint_limits = self.robot.robot_pos_bound[:self.n_jnt]   # [n_joints, 2]
+        for i, joint_limit in enumerate(joint_limits):
+            reset_pos[i] = np.random.uniform(joint_limit[0], joint_limit[1])
+        reset_pos[8] = reset_pos[7]     # ensure that initial gripper opening is symmetric
+
+        # for each object that is not target object: sample in range(start, goal)
+        for object in OBS_ELEMENT_INDICES:
+            if object in self.TASK_ELEMENTS:
+                # don't change initial position of task goal objects
+                continue
+            for obj_element_idx, obj_element_goal in zip(OBS_ELEMENT_INDICES[object], OBS_ELEMENT_GOALS[object]):
+                reset_pos[obj_element_idx] = np.random.uniform(min(reset_pos[obj_element_idx], obj_element_goal),
+                                                               max(reset_pos[obj_element_idx], obj_element_goal))
+
+        reset_vel = self.init_qvel[:].copy()
+        self.robot.reset(self, reset_pos, reset_vel)
+        self.sim.forward()
+        self.goal = self._get_task_goal()  #sample a new goal on reset
+        self.tasks_to_complete = list(self.TASK_ELEMENTS)
+        return self._get_obs()
+
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
 
@@ -145,3 +172,7 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
         data = self.get_dataset()
         seqs = self._split_data_into_seqs(data)
         return seqs[1]['states'][-1]
+
+class KitchenMicrowaveRandV0(KitchenRand):
+    TASK_ELEMENTS = ['microwave']
+
