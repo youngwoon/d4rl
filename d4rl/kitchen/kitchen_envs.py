@@ -24,6 +24,15 @@ OBS_ELEMENT_GOALS = {
     'microwave': np.array([-0.75]),
     'kettle': np.array([-0.23, 0.75, 1.62, 0.99, 0., 0., -0.06]),
     }
+GOAL_APPROACH_SITES = {
+    'bottom burner': "knob2_site",
+    'top burner': "knob4_site",
+    'light switch': "light_site",
+    'slide cabinet': "slide_site",
+    'hinge cabinet': "hinge_site2",
+    'microwave': "microhandle_site",
+    'kettle': "kettle_site",
+}
 BONUS_THRESH = 0.3
 
 @configurable(pickleable=True)
@@ -35,6 +44,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
     REMOVE_TASKS_WHEN_COMPLETE = True
     TERMINATE_ON_TASK_COMPLETE = True
     TERMINATE_ON_WRONG_COMPLETE = False
+    DENSE_REWARD = False
 
     def __init__(self, dataset_url=None, ref_max_score=None, ref_min_score=None, **kwargs):
         self.tasks_to_complete = list(self.TASK_ELEMENTS)
@@ -69,11 +79,22 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         idx_offset = len(next_q_obs)
         completions = []
         all_completed_so_far = True
+        goal_dists, approach_dists = [], []
         for element in self.tasks_to_complete:
             element_idx = OBS_ELEMENT_INDICES[element]
+            # compute distance to approach site
+            approach_dist = np.linalg.norm(
+                self.sim.data.site_xpos[self.sim.model.site_name2id(GOAL_APPROACH_SITES[element])]
+                - self.sim.data.site_xpos[self.sim.model.site_name2id("end_effector")])
+            approach_dists.append(approach_dist)
+
+            # compute distance to goal
             distance = np.linalg.norm(
                 next_obj_obs[..., element_idx - idx_offset] -
                 next_goal[element_idx])
+            goal_dists.append(distance)
+
+            # check whether we completed the task
             complete = distance < BONUS_THRESH
             if complete and all_completed_so_far: #element == self.tasks_to_complete[0]:
                 completions.append(element)
@@ -82,7 +103,13 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
             [self.tasks_to_complete.remove(element) for element in completions]
         bonus = float(len(completions))
         reward_dict['bonus'] = bonus
-        reward_dict['r_total'] = bonus
+
+        if self.DENSE_REWARD:
+            reward_dict['goal_dist'] = np.sum(goal_dists)
+            reward_dict['approach_dist'] = np.sum(approach_dists)
+            reward_dict['r_total'] = -1 * reward_dict['goal_dist'] - 0.5 * reward_dict['approach_dist'] + bonus
+        else:
+            reward_dict['r_total'] = bonus
         score = bonus
         return reward_dict, score
 
@@ -100,6 +127,11 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
                     done = True
                     break
         env_info['completed_tasks'] = set(self.TASK_ELEMENTS) - set(self.tasks_to_complete)
+
+        if self.DENSE_REWARD:
+            # append goal and approach dists to observation
+            obs = np.concatenate([obs, np.asarray([env_info['rewards']['goal_dist'],
+                                                   env_info['rewards']['approach_dist']])])
         return obs, reward, done, env_info
 
     # def render(self, mode='human'):
@@ -149,21 +181,28 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
 
 class KitchenBottomBurnerV0(KitchenBase):
     TASK_ELEMENTS = ['bottom burner']
+    DENSE_REWARD = True
 
 class KitchenTopBurnerV0(KitchenBase):
     TASK_ELEMENTS = ['top burner']
+    DENSE_REWARD = True
 
 class KitchenLightSwitchV0(KitchenBase):
     TASK_ELEMENTS = ['light switch']
+    DENSE_REWARD = True
 
 class KitchenSlideCabinetV0(KitchenBase):
     TASK_ELEMENTS = ['slide cabinet']
+    DENSE_REWARD = True
 
 class KitchenHingeCabinetV0(KitchenBase):
     TASK_ELEMENTS = ['hinge cabinet']
+    DENSE_REWARD = True
 
 class KitchenMicrowaveV0(KitchenBase):
     TASK_ELEMENTS = ['microwave']
+    DENSE_REWARD = True
 
 class KitchenKettleV0(KitchenBase):
     TASK_ELEMENTS = ['kettle']
+    DENSE_REWARD = True
