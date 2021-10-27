@@ -79,20 +79,13 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         idx_offset = len(next_q_obs)
         completions = []
         all_completed_so_far = True
-        goal_dists, approach_dists = [], []
         for element in self.tasks_to_complete:
             element_idx = OBS_ELEMENT_INDICES[element]
-            # compute distance to approach site
-            approach_dist = np.linalg.norm(
-                self.sim.data.site_xpos[self.sim.model.site_name2id(GOAL_APPROACH_SITES[element])]
-                - self.sim.data.site_xpos[self.sim.model.site_name2id("end_effector")])
-            approach_dists.append(approach_dist)
 
             # compute distance to goal
             distance = np.linalg.norm(
                 next_obj_obs[..., element_idx - idx_offset] -
                 next_goal[element_idx])
-            goal_dists.append(distance)
 
             # check whether we completed the task
             complete = distance < BONUS_THRESH
@@ -105,8 +98,8 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         reward_dict['bonus'] = bonus
 
         if self.DENSE_REWARD:
-            reward_dict['goal_dist'] = np.sum(goal_dists)
-            reward_dict['approach_dist'] = np.sum(approach_dists)
+            reward_dict['goal_dist'] = np.linalg.norm(obs_dict['goal_dist'])
+            reward_dict['approach_dist'] = np.linalg.norm(obs_dict['approach_dist'])
             reward_dict['r_total'] = -1 * reward_dict['goal_dist'] - 0.5 * reward_dict['approach_dist'] + bonus
         else:
             reward_dict['r_total'] = bonus
@@ -127,16 +120,28 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
                     done = True
                     break
         env_info['completed_tasks'] = set(self.TASK_ELEMENTS) - set(self.tasks_to_complete)
-
-        if self.DENSE_REWARD:
-            # append goal and approach dists to observation
-            obs = np.concatenate([obs, np.asarray([env_info['rewards']['goal_dist'],
-                                                   env_info['rewards']['approach_dist']])])
         return obs, reward, done, env_info
 
     # def render(self, mode='human'):
     #     # Disable rendering to speed up environment evaluation.
     #     return []
+
+    def _get_obs(self):
+        obs = super()._get_obs()
+        if self.DENSE_REWARD:
+            # compute distance to next subgoal
+            element_idx = OBS_ELEMENT_INDICES[self.tasks_to_complete[0]]
+            self.obs_dict['goal_dist'] = self.obs_dict['obj_qp'][..., element_idx - len(self.obs_dict['qp'])] \
+                    - self._get_task_goal(task=self.TASK_ELEMENTS)[element_idx]
+
+            # compute distance to next approach site
+            self.obs_dict['approach_dist'] = \
+                self.sim.data.site_xpos[self.sim.model.site_name2id(GOAL_APPROACH_SITES[self.tasks_to_complete[0]])] \
+                    - self.sim.data.site_xpos[self.sim.model.site_name2id("end_effector")]
+
+            # concatenate goal and approach dists to observation
+            obs = np.concatenate([obs, self.obs_dict['goal_dist'], self.obs_dict['approach_dist']])
+        return obs
 
     def get_goal(self):
         """Loads goal state from dataset for goal-conditioned approaches (like RPL)."""
