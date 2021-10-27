@@ -59,10 +59,10 @@ class KitchenV0(robot_env.RobotEnv):
             #     elevation=-65,
             # ),
             camera_settings=dict(
-                lookat=[-0.2, 0.5, 2.0],
-                distance=3.2,
-                azimuth=70,
-                elevation=-35,
+                lookat=[1, 0.5, 2.0],
+                distance=2.2,
+                azimuth=114,
+                elevation=-18,
             ),
         )
         self.init_qpos = self.sim.model.key_qpos[0].copy()
@@ -207,12 +207,12 @@ class KitchenTaskRelaxV1(KitchenV0):
         if mode =='rgb_array':
             if not hasattr(self, "viewer"):
                 self.viewer = mujoco_py.MjRenderContextOffscreen(self.sim, -1)
-                self.viewer.cam.lookat[0] = -0.2
+                self.viewer.cam.lookat[0] = 1.0
                 self.viewer.cam.lookat[1] = .5
                 self.viewer.cam.lookat[2] = 2.
                 self.viewer.cam.distance = 2.2
-                self.viewer.cam.azimuth = 70
-                self.viewer.cam.elevation = -35
+                self.viewer.cam.azimuth = 114
+                self.viewer.cam.elevation = -18
             #camera = engine.MovableCamera(self.sim, 1920, 2560)
             #camera.set_pose(distance=2.2, lookat=[-0.2, .5, 2.], azimuth=70, elevation=-35)
             render_device = os.environ.get("CUDA_VISIBLE_DEVICES") if os.environ.get("CUDA_VISIBLE_DEVICES") is not None else -1
