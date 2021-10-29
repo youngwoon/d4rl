@@ -6,6 +6,8 @@ from d4rl.kitchen_2.adept_envs.franka.kitchen_multitask_v0 import KitchenTaskRel
 
 from d4rl.offline_env import OfflineEnv
 
+SEMANTIC_SKILLS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet',
+                   'hinge cabinet', 'microwave', 'kettle']
 OBS_ELEMENT_INDICES = {
     'bottom burner': np.array([9, 10]), # (from 11, 12)
     'top burner': np.array([13, 14]), # (from 15, 16)
@@ -45,6 +47,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
     TERMINATE_ON_TASK_COMPLETE = True
     TERMINATE_ON_WRONG_COMPLETE = False
     DENSE_REWARD = False
+    ENFORCE_TASK_ORDER = True
 
     def __init__(self, dataset_url=None, ref_max_score=None, ref_min_score=None, **kwargs):
         self.tasks_to_complete = list(self.TASK_ELEMENTS)
@@ -89,7 +92,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
 
             # check whether we completed the task
             complete = distance < BONUS_THRESH
-            if complete and all_completed_so_far: #element == self.tasks_to_complete[0]:
+            if complete and (all_completed_so_far or not self.ENFORCE_TASK_ORDER):
                 completions.append(element)
             all_completed_so_far = all_completed_so_far and complete
         if self.REMOVE_TASKS_WHEN_COMPLETE:
@@ -162,6 +165,15 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
             start = end_idx + 1
         return seqs
 
+    @staticmethod
+    def check_task_done(task_name, obs):
+        assert task_name in OBS_ELEMENT_INDICES, "Task {} is not defined!".format(task_name)
+        return np.linalg.norm(obs[..., OBS_ELEMENT_INDICES[task_name]] - OBS_ELEMENT_GOALS[task_name]) < BONUS_THRESH
+
+    @staticmethod
+    def semantic_skills():
+        return SEMANTIC_SKILLS
+
 
 class KitchenRand(KitchenBase):
     """Randomly initializes agent + environment (except for target objects)."""
@@ -189,6 +201,13 @@ class KitchenRand(KitchenBase):
         self.goal = self._get_task_goal()  #sample a new goal on reset
         self.tasks_to_complete = list(self.TASK_ELEMENTS)
         return self._get_obs()
+
+
+class KitchenAllTasksV0(KitchenBase):
+    TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet',
+                     'hinge cabinet', 'microwave', 'kettle']
+    ENFORCE_TASK_ORDER = False
+
 
 class KitchenMicrowaveKettleBottomBurnerLightV0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
