@@ -206,7 +206,7 @@ register(
     }
 )
 register(
-    id='kitchen-2-HC-rand-v0',
+    id='kitchen-2-HC-datainit-v0',
     entry_point='d4rl.kitchen_2:KitchenHingeCabinetDataInitV0',
     max_episode_steps=70,
     kwargs={
