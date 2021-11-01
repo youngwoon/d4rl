@@ -22,7 +22,7 @@ OBS_ELEMENT_GOALS = {
     'top burner': np.array([-0.92, -0.01]),
     'light switch': np.array([-0.69, -0.05]),
     'slide cabinet': np.array([0.37]),
-    'hinge cabinet': np.array([-1.2, 0]), # (from np.array([0., 1.45]),)
+    'hinge cabinet': np.array([0, 1.2]),  #-1.2, 0]), # (from np.array([0., 1.45]),)
     'microwave': np.array([-0.75]),
     'kettle': np.array([-0.27, 0.75, 1.62, 0.99, 0., 0., -0.06]), # from [-0.23, ...]
     }
@@ -31,7 +31,7 @@ GOAL_APPROACH_SITES = {
     'top burner': "knob3_site",
     'light switch': "light_site",
     'slide cabinet': "slide_site",
-    'hinge cabinet': "hinge_site1",
+    'hinge cabinet': "hinge_site2", #1",
     'microwave': "microhandle_site",
     'kettle': "kettle_site",
 }
@@ -145,7 +145,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
                     - self.sim.data.site_xpos[self.sim.model.site_name2id("end_effector")]
 
             # concatenate goal and approach dists to observation
-            obs = np.concatenate([obs, self.obs_dict['goal_dist'], self.obs_dict['approach_dist']])
+            # obs = np.concatenate([obs, self.obs_dict['goal_dist'], self.obs_dict['approach_dist']])
         return obs
 
     def get_goal(self):

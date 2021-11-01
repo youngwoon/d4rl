@@ -20,7 +20,7 @@ register(
 register(
     id='kitchen-2-BB-v0',
     entry_point='d4rl.kitchen_2:KitchenBottomBurnerV0',
-    max_episode_steps=50,
+    max_episode_steps=100,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,
@@ -30,7 +30,7 @@ register(
 register(
     id='kitchen-2-TB-v0',
     entry_point='d4rl.kitchen_2:KitchenTopBurnerV0',
-    max_episode_steps=50,
+    max_episode_steps=100,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,
@@ -40,7 +40,7 @@ register(
 register(
     id='kitchen-2-LS-v0',
     entry_point='d4rl.kitchen_2:KitchenLightSwitchV0',
-    max_episode_steps=50,
+    max_episode_steps=100,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,
@@ -50,7 +50,7 @@ register(
 register(
     id='kitchen-2-SC-v0',
     entry_point='d4rl.kitchen_2:KitchenSlideCabinetV0',
-    max_episode_steps=50,
+    max_episode_steps=100,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,
@@ -60,7 +60,7 @@ register(
 register(
     id='kitchen-2-HC-v0',
     entry_point='d4rl.kitchen_2:KitchenHingeCabinetV0',
-    max_episode_steps=50,
+    max_episode_steps=100,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,
@@ -70,7 +70,7 @@ register(
 register(
     id='kitchen-2-MW-v0',
     entry_point='d4rl.kitchen_2:KitchenMicrowaveV0',
-    max_episode_steps=50,
+    max_episode_steps=100,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,
@@ -80,7 +80,7 @@ register(
 register(
     id='kitchen-2-KET-v0',
     entry_point='d4rl.kitchen_2:KitchenKettleV0',
-    max_episode_steps=50,
+    max_episode_steps=100,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,
