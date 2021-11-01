@@ -203,6 +203,64 @@ class KitchenRand(KitchenBase):
         return self._get_obs()
 
 
+class KitchenDatasetInit(KitchenBase):
+    """Loads states from given rollout sequences & initializes environment accordingly."""
+    DATASET_PATH = "/Users/kpertsch/data/kitchen_2_rollouts"        # path to root folder for datasets
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # load dataset states into memory
+        self._init_states = {}
+        for task in OBS_ELEMENT_INDICES:
+            self._init_states[task] = self._load_states(os.path.join(self.DATASET_PATH, task.replace(' ', '_')))
+
+    def reset_model(self):
+        reset_pos = self.init_qpos[:].copy()
+
+        # randomly sample joints & gripper position from the loaded dataset
+        sample_task = np.random.choice(list(OBS_ELEMENT_INDICES))
+        sample_state = self._init_states[sample_task][np.random.randint(self._init_states[sample_task].shape[0])]
+        reset_pos[:9] = sample_state[:9]
+
+        # for each object that is not target object and not sampled task: sample in range(start, goal)
+        for object in OBS_ELEMENT_INDICES:
+            if object in self.TASK_ELEMENTS or object == sample_task:
+                # don't change initial position of task goal objects
+                continue
+            for obj_element_idx, obj_element_goal in zip(OBS_ELEMENT_INDICES[object], OBS_ELEMENT_GOALS[object]):
+                reset_pos[obj_element_idx] = np.random.uniform(min(reset_pos[obj_element_idx], obj_element_goal),
+                                                               max(reset_pos[obj_element_idx], obj_element_goal))
+
+        # set object from sampled task to position from sampled state
+        reset_pos[OBS_ELEMENT_INDICES[sample_task]] = sample_state[OBS_ELEMENT_INDICES[sample_task]]
+
+        reset_vel = self.init_qvel[:].copy()
+        self.robot.reset(self, reset_pos, reset_vel)
+        self.sim.forward()
+        self.goal = self._get_task_goal()  #sample a new goal on reset
+        self.tasks_to_complete = list(self.TASK_ELEMENTS)
+        return self._get_obs()
+
+    def _load_states(self, data_dir):
+        # load all H5 filenames in directory
+        filenames = []
+        for root, dirs, files in os.walk(data_dir, followlinks=True):
+            for file in files:
+                if file.endswith(".h5"): filenames.append(os.path.join(root, file))
+        if not filenames:
+            raise ValueError("Did not find rollouts in {}!".format(data_dir))
+
+        # load states from trajectories
+        import tqdm, h5py
+        states = []
+        for traj in tqdm.tqdm(filenames):
+            with h5py.File(traj, 'r') as F:
+                states.append(F['traj0/states'][()])
+        return np.concatenate(states)
+
+
 class KitchenAllTasksV0(KitchenBase):
     TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet',
                      'hinge cabinet', 'microwave', 'kettle']
@@ -296,5 +354,42 @@ class KitchenMicrowaveRandV0(KitchenRand):
 
 
 class KitchenKettleRandV0(KitchenRand):
+    TASK_ELEMENTS = ['kettle']
+    DENSE_REWARD = True
+
+
+# SINGLE TASK -- DATALOADED INIT ENVS
+
+class KitchenBottomBurnerDataInitV0(KitchenDatasetInit):
+    TASK_ELEMENTS = ['bottom burner']
+    DENSE_REWARD = True
+
+
+class KitchenTopBurnerDataInitV0(KitchenDatasetInit):
+    TASK_ELEMENTS = ['top burner']
+    DENSE_REWARD = True
+
+
+class KitchenLightSwitchDataInitV0(KitchenDatasetInit):
+    TASK_ELEMENTS = ['light switch']
+    DENSE_REWARD = True
+
+
+class KitchenSlideCabinetDataInitV0(KitchenDatasetInit):
+    TASK_ELEMENTS = ['slide cabinet']
+    DENSE_REWARD = True
+
+
+class KitchenHingeCabinetDataInitV0(KitchenDatasetInit):
+    TASK_ELEMENTS = ['hinge cabinet']
+    DENSE_REWARD = True
+
+
+class KitchenMicrowaveDataInitV0(KitchenDatasetInit):
+    TASK_ELEMENTS = ['microwave']
+    DENSE_REWARD = True
+
+
+class KitchenKettleDataInitV0(KitchenDatasetInit):
     TASK_ELEMENTS = ['kettle']
     DENSE_REWARD = True

@@ -163,6 +163,80 @@ register(
 )
 
 
+### SINGLE TASK -- DATASET LOADED START envs
+
+register(
+    id='kitchen-2-BB-datainit-v0',
+    entry_point='d4rl.kitchen_2:KitchenBottomBurnerDataInitV0',
+    max_episode_steps=100,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-TB-datainit-v0',
+    entry_point='d4rl.kitchen_2:KitchenTopBurnerDataInitV0',
+    max_episode_steps=100,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-LS-datainit-v0',
+    entry_point='d4rl.kitchen_2:KitchenLightSwitchDataInitV0',
+    max_episode_steps=100,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-SC-datainit-v0',
+    entry_point='d4rl.kitchen_2:KitchenSlideCabinetDataInitV0',
+    max_episode_steps=100,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-HC-rand-v0',
+    entry_point='d4rl.kitchen_2:KitchenHingeCabinetDataInitV0',
+    max_episode_steps=70,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-MW-datainit-v0',
+    entry_point='d4rl.kitchen_2:KitchenMicrowaveDataInitV0',
+    max_episode_steps=100,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-KET-datainit-v0',
+    entry_point='d4rl.kitchen_2:KitchenKettleDataInitV0',
+    max_episode_steps=100,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+
+
 ### ALL TASKS ###
 register(
     id='kitchen-2-all-tasks-v0',
