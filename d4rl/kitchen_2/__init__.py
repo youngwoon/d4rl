@@ -15,6 +15,90 @@ register(
     }
 )
 
+### MULTI TASK -- DATA COLLECT FIXED envs
+
+register(
+    id='kitchen-2-BB-TB-LS-SC-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_BB_TB_LS_SC_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-BB-TB-SC-HC-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_BB_TB_SC_HC_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-MW-BB-TB-LS-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_MW_BB_TB_LS_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-MW-BB-TB-SC-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_MW_BB_TB_SC_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-MW-BB-TB-HC-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_MW_BB_TB_HC_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-MW-BB-LS-SC-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_MW_BB_LS_SC_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-MW-BB-SC-HC-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_MW_BB_SC_HC_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+register(
+    id='kitchen-2-MW-TB-LS-HC-v0',
+    entry_point='d4rl.kitchen_2:Kitchen_MW_TB_LS_HC_V0',
+    max_episode_steps=280,
+    kwargs={
+        'ref_min_score': 0.0,
+        'ref_max_score': 4.0,
+        'dataset_url': 'http://rail.eecs.berkeley.edu/datasets/offline_rl/kitchen/kitchen_microwave_kettle_bottomburner_light-v0.hdf5',
+    }
+)
+
+
 ### SINGLE TASK -- FIXED envs
 
 register(

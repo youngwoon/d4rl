@@ -290,6 +290,33 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
         return seqs[1]['states'][-1]
 
 
+# MULTI TASK -- DATA COLLECT -- FIXED ENVS
+
+class Kitchen_BB_TB_LS_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
+
+class Kitchen_BB_TB_SC_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['bottom burner', 'top burner', 'slide cabinet', 'hinge cabinet']
+
+class Kitchen_MW_BB_TB_LS_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'light switch']
+
+class Kitchen_MW_BB_TB_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'slide cabinet']
+
+class Kitchen_MW_BB_TB_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'hinge cabinet']
+
+class Kitchen_MW_BB_LS_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'slide cabinet']
+
+class Kitchen_MW_BB_SC_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'slide cabinet', 'hinge cabinet']
+
+class Kitchen_MW_TB_LS_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'top burner', 'light switch', 'hinge cabinet']
+
+
 # SINGLE TASK -- FIXED ENVS
 
 class KitchenBottomBurnerV0(KitchenBase):
