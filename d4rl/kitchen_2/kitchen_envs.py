@@ -295,6 +295,9 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
 class Kitchen_BB_TB_LS_SC_V0(KitchenBase):
     TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
 
+class Kitchen_BB_TB_SC_LS_V0(KitchenBase):
+    TASK_ELEMENTS = ['bottom burner', 'top burner', 'slide cabinet', 'light switch']
+
 class Kitchen_BB_TB_SC_HC_V0(KitchenBase):
     TASK_ELEMENTS = ['bottom burner', 'top burner', 'slide cabinet', 'hinge cabinet']
 
@@ -307,14 +310,86 @@ class Kitchen_MW_BB_TB_SC_V0(KitchenBase):
 class Kitchen_MW_BB_TB_HC_V0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'bottom burner', 'top burner', 'hinge cabinet']
 
+class Kitchen_MW_BB_LS_TB_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'top burner']
+
 class Kitchen_MW_BB_LS_SC_V0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'bottom burner', 'light switch', 'slide cabinet']
+
+class Kitchen_MW_BB_SC_TB_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'slide cabinet', 'top burner']
 
 class Kitchen_MW_BB_SC_HC_V0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'bottom burner', 'slide cabinet', 'hinge cabinet']
 
+class Kitchen_MW_BB_HC_TB_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'bottom burner', 'hinge cabinet', 'top burner']
+
 class Kitchen_MW_TB_LS_HC_V0(KitchenBase):
     TASK_ELEMENTS = ['microwave', 'top burner', 'light switch', 'hinge cabinet']
+
+class Kitchen_MW_LS_SC_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'light switch', 'slide cabinet', 'hinge cabinet']
+
+class Kitchen_MW_KET_BB_TB_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'top burner']
+
+class Kitchen_MW_KET_BB_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'slide cabinet']
+
+class Kitchen_MW_KET_BB_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'hinge cabinet']
+
+class Kitchen_MW_KET_TB_LS_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'top burner', 'light switch']
+
+class Kitchen_MW_KET_TB_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'top burner', 'hinge cabinet']
+
+class Kitchen_MW_KET_LS_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'slide cabinet']
+
+class Kitchen_MW_KET_LS_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'light switch', 'hinge cabinet']
+
+class Kitchen_MW_KET_SC_BB_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'bottom burner']
+
+class Kitchen_MW_KET_SC_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'slide cabinet', 'hinge cabinet']
+
+class Kitchen_KET_BB_TB_LS_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'top burner', 'light switch']
+
+class Kitchen_KET_BB_TB_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'top burner', 'slide cabinet']
+
+class Kitchen_KET_BB_TB_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'top burner', 'hinge cabinet']
+
+class Kitchen_KET_BB_LS_TB_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'light switch', 'top burner']
+
+class Kitchen_KET_BB_LS_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'light switch', 'slide cabinet']
+
+class Kitchen_KET_BB_LS_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'light switch', 'hinge cabinet']
+
+class Kitchen_KET_BB_SC_TB_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'slide cabinet', 'top burner']
+
+class Kitchen_KET_BB_SC_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'bottom burner', 'slide cabinet', 'hinge cabinet']
+
+class Kitchen_KET_TB_LS_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'top burner', 'light switch', 'slide cabinet']
+
+class Kitchen_KET_LS_SC_BB_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'light switch', 'slide cabinet', 'bottom burner']
+
+class Kitchen_KET_LS_SC_HC_V0(KitchenBase):
+    TASK_ELEMENTS = ['kettle', 'light switch', 'slide cabinet', 'hinge cabinet']
 
 
 # SINGLE TASK -- FIXED ENVS
