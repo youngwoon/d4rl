@@ -35,7 +35,7 @@ GOAL_APPROACH_SITES = {
     'microwave': "microhandle_site",
     'kettle': "kettle_site",
 }
-BONUS_THRESH = 0.3
+BONUS_THRESH = 0.25
 
 @configurable(pickleable=True)
 class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
@@ -57,6 +57,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
             dataset_url=dataset_url,
             ref_max_score=ref_max_score,
             ref_min_score=ref_min_score)
+
 
     def _get_task_goal(self, task=None):
         if task is None:
@@ -91,7 +92,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
                 next_goal[element_idx])
 
             # check whether we completed the task
-            complete = distance < BONUS_THRESH
+            complete = distance < BONUS_THRESH * np.linalg.norm(self.init_qpos[element_idx] - next_goal[element_idx])
             if complete and (all_completed_so_far or not self.ENFORCE_TASK_ORDER):
                 completions.append(element)
             all_completed_so_far = all_completed_so_far and complete
