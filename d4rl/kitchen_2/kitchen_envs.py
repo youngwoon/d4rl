@@ -36,6 +36,8 @@ GOAL_APPROACH_SITES = {
     'kettle': "kettle_site",
 }
 BONUS_THRESH = 0.25
+INIT_KETTLE_SITE = np.array([0.83, 0.35, 1.87665787])
+TARGET_KETTLE_SITE = np.array([0.83, 0.75, 1.8749218])
 
 @configurable(pickleable=True)
 class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
@@ -86,13 +88,20 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         for element in self.tasks_to_complete:
             element_idx = OBS_ELEMENT_INDICES[element]
 
-            # compute distance to goal
-            distance = np.linalg.norm(
-                next_obj_obs[..., element_idx - idx_offset] -
-                next_goal[element_idx])
+            if element == "kettle":
+                # kettle needs to compute distance with grasping site --> more stable
+                distance = np.linalg.norm(
+                    self.sim.data.site_xpos[self.sim.model.site_name2id('kettle_site')] - TARGET_KETTLE_SITE)
+                complete = distance < BONUS_THRESH * np.linalg.norm(INIT_KETTLE_SITE - TARGET_KETTLE_SITE)
+            else:
+                # compute distance to goal
+                distance = np.linalg.norm(
+                    next_obj_obs[..., element_idx - idx_offset] -
+                    next_goal[element_idx])
 
-            # check whether we completed the task
-            complete = distance < BONUS_THRESH * np.linalg.norm(self.init_qpos[element_idx] - next_goal[element_idx])
+                # check whether we completed the task
+                complete = distance < BONUS_THRESH * np.linalg.norm(self.init_qpos[element_idx] - next_goal[element_idx])
+
             if complete and (all_completed_so_far or not self.ENFORCE_TASK_ORDER):
                 completions.append(element)
             all_completed_so_far = all_completed_so_far and complete
