@@ -1,6 +1,7 @@
 """Environments using kitchen and Franka robot."""
 import os
 import numpy as np
+import mujoco_py
 from d4rl.kitchen.adept_envs.utils.configurable import configurable
 from d4rl.kitchen.adept_envs.franka.kitchen_multitask_v0 import KitchenTaskRelaxV1
 
@@ -162,6 +163,51 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
             ))
             start = end_idx + 1
         return seqs
+
+    ### STATE UTILS
+
+    def set_state(self, qpos, qvel):
+        """
+        Set MuJoCo sim state
+        """
+        assert qpos.shape == (self.sim.model.nq,) and qvel.shape == (self.sim.model.nv,)
+        old_state = self.sim.get_state()
+        new_state = mujoco_py.MjSimState(old_state.time, qpos, qvel,
+                                         old_state.act, old_state.udd_state)
+        self.sim.set_state(new_state)
+        self.sim.forward()
+
+    def get_env_state(self):
+        """
+        Get full state of the environemnt
+        Default implemention provided. Override if env has custom state
+        """
+        qp = self.sim.data.qpos.ravel().copy()
+        qv = self.sim.data.qvel.ravel().copy()
+        site_pos = self.sim.model.site_pos[:].copy()
+        body_pos = self.sim.model.body_pos[:].copy()
+        return dict(qpos=qp,
+                    qvel=qv,
+                    site_pos=site_pos,
+                    site_quat=self.sim.model.site_quat[:].copy(),
+                    body_pos=body_pos,
+                    body_quat=self.sim.model.body_quat[:].copy(),
+                    tasks_to_complete=self.tasks_to_complete, )
+
+    def set_env_state(self, state_dict):
+        """
+        Set full state of the environemnt
+        Default implemention provided. Override if env has custom state
+        """
+        qp = state_dict['qpos']
+        qv = state_dict['qvel']
+        self.set_state(qp, qv)
+        self.sim.model.site_pos[:] = state_dict['site_pos']
+        self.sim.model.site_quat[:] = state_dict['site_quat']
+        self.sim.model.body_pos[:] = state_dict['body_pos']
+        self.sim.model.body_quat[:] = state_dict['body_quat']
+        self.tasks_to_complete = state_dict['tasks_to_complete']
+        self.sim.forward()
 
     @staticmethod
     def check_task_done(task_name, obs):
