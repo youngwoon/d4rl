@@ -4,14 +4,18 @@
     <asset>
         <texture name="T_wall_marble" type="cube" height="1" width="1" file="../kitchen/textures/marble1.png"/>
         <texture name="T_wall_metal" type="cube" height="1" width="1" file="../kitchen/textures/metal1.png"/>
+        <texture name="T_wall_wood" type="cube" height="1" width="1" file="../kitchen/textures/wood1.png"/>
+        <texture name="T_wall_tile" type="cube" height="1" width="1" file="../kitchen/textures/tile1.png"/>
 
-        <material name="wall_white" rgba="1 1 1 1" reflectance="0" shininess="0"/>
+        <material name="wall_tile" rgba="1 1 1 1" reflectance="0" shininess="0" texture="T_wall_marble" texrepeat="3 1" texuniform="false"/>
+        <material name="wall_white" rgba="1 1 1 1" reflectance="0" shininess="0" texture="T_wall_wood" texrepeat="3 3" texuniform="false"/>
+        <material name="wall_white_dark" rgba=".46 .5 .6 1" reflectance="0.7" shininess=".4" texture="T_slide_wood" texrepeat="3 3" texuniform="false"/>
         <material name="wall_blue" rgba=".66 .7 .8 1" reflectance="0" shininess="0"/>
         <material name="wall_collision_blue" rgba="0.3 0.3 1.0 0.5" shininess="0" specular="0"/>
     </asset>
     <default>
         <default class="backwall">
-            <geom conaffinity="0" contype="0" group="1" material="wall_blue"/>
+            <geom conaffinity="0" contype="0" group="1" material="wall_white"/>
             <default class="wall_collision">
                 <geom conaffinity="1" condim="3" contype="0" group="4" margin="0.001" material="wall_collision_blue"/>
             </default>

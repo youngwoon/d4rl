@@ -10,7 +10,7 @@
         <mesh file="../kitchen/meshes/microhandle.stl" name="microhandle"/>
         <mesh file="../kitchen/meshes/microwindow.stl" name="microwindow"/>
 
-        <texture name="T_micro_metal" type="cube" height="1" width="1" file="../kitchen/textures/metal1.png"/>
+        <texture name="T_micro_metal" type="cube" height="1" width="1" file="../kitchen/textures/chrome.png"/>
 
         <material name="micro_metal" rgba="1 1 1 1" texture="T_micro_metal" texrepeat="3 3" reflectance="1" shininess="1" texuniform="false"/>
         <material name="micro_black" rgba=".2 .2 .2 1" reflectance="1" shininess="1"/>

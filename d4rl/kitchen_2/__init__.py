@@ -575,7 +575,7 @@ register(
 register(
     id='kitchen-2-all-tasks-v0',
     entry_point='d4rl.kitchen_2:KitchenAllTasksV0',
-    max_episode_steps=280,
+    max_episode_steps=10000, #280,
     kwargs={
         'ref_min_score': 0.0,
         'ref_max_score': 4.0,

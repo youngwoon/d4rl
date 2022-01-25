@@ -3,10 +3,11 @@
     <compiler inertiafromgeom="auto" inertiagrouprange="4 4" angle="radian"/>
 
     <asset>
-        <texture name="T_slide_metal" type="cube" height="1" width="1" file="../kitchen/textures/metal1.png"/>
+        <texture name="T_slide_metal" type="cube" height="1" width="1" file="../kitchen/textures/chrome.png"/>
+        <texture name="T_slide_wood" type="cube" height="1" width="1" file="../kitchen/textures/wood1.png"/>
 
         <material name="M_slide_metal" texture="T_slide_metal" texrepeat="3 3" reflectance="0.7" shininess=".4" texuniform="false"/>
-        <material name="M_slide_blue" rgba=".46 .5 .6 1" reflectance="0.7" shininess=".4"/>
+        <material name="M_slide_blue" rgba=".46 .5 .6 1" reflectance="0.7" shininess=".4" texture="T_slide_wood" texrepeat="3 3" texuniform="false"/>
         <material name="slide_collision_blue" rgba="0.3 0.3 1.0 0.5" shininess="0" specular="0"/>
     </asset>
     <default>

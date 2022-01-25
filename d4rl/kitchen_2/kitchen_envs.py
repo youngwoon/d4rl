@@ -23,7 +23,7 @@ OBS_ELEMENT_GOALS = {
     'top burner': np.array([-0.92, -0.01]),
     'light switch': np.array([-0.69, -0.05]),
     'slide cabinet': np.array([0.37]),
-    'hinge cabinet': np.array([0, 1.2]),  #-1.2, 0]), # (from np.array([0., 1.45]),)
+    'hinge cabinet': np.array([-1.2, 0]), # (from np.array([0., 1.45]),)
     'microwave': np.array([-0.75]),
     'kettle': np.array([-0.27, 0.75, 1.62, 0.99, 0., 0., -0.06]), # from [-0.23, ...]
     }
@@ -32,11 +32,11 @@ GOAL_APPROACH_SITES = {
     'top burner': "knob3_site",
     'light switch': "light_site",
     'slide cabinet': "slide_site",
-    'hinge cabinet': "hinge_site2", #1",
+    'hinge cabinet': "hinge_site1", #1",
     'microwave': "microhandle_site",
     'kettle': "kettle_site",
 }
-BONUS_THRESH = 0.25
+BONUS_THRESH = 0.35
 INIT_KETTLE_SITE = np.array([0.83, 0.35, 1.87665787])
 TARGET_KETTLE_SITE = np.array([0.83, 0.75, 1.8749218])
 
@@ -49,11 +49,12 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
     REMOVE_TASKS_WHEN_COMPLETE = True
     TERMINATE_ON_TASK_COMPLETE = True
     TERMINATE_ON_WRONG_COMPLETE = False
-    DENSE_REWARD = False
+    DENSE_REWARD = True #False
     ENFORCE_TASK_ORDER = True
 
     def __init__(self, dataset_url=None, ref_max_score=None, ref_min_score=None, **kwargs):
         self.tasks_to_complete = list(self.TASK_ELEMENTS)
+        self.real_step = True
         super(KitchenBase, self).__init__(**kwargs)
         OfflineEnv.__init__(
             self,
@@ -84,16 +85,22 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         next_obj_obs = obs_dict['obj_qp']
         next_goal = self._get_task_goal(task=self.TASK_ELEMENTS) #obs_dict['goal']
         idx_offset = len(next_q_obs)
-        completions = []
+        completions, bonus = [], 0
         all_completed_so_far = True
-        for element in self.tasks_to_complete:
+        for i, element in enumerate(self.tasks_to_complete):
             element_idx = OBS_ELEMENT_INDICES[element]
 
             if element == "kettle":
                 # kettle needs to compute distance with grasping site --> more stable
                 distance = np.linalg.norm(
-                    self.sim.data.site_xpos[self.sim.model.site_name2id('kettle_site')] - TARGET_KETTLE_SITE)
-                complete = distance < BONUS_THRESH * np.linalg.norm(INIT_KETTLE_SITE - TARGET_KETTLE_SITE)
+                    next_obj_obs[..., element_idx - idx_offset] -
+                    next_goal[element_idx])
+                #distance = np.linalg.norm(
+                #    self.sim.data.site_xpos[self.sim.model.site_name2id('kettle_site')] - TARGET_KETTLE_SITE)
+                complete = distance < 0.3 #BONUS_THRESH * np.linalg.norm(INIT_KETTLE_SITE - TARGET_KETTLE_SITE)
+                if i == 0:
+                    bonus = float(complete) \
+                            + 0 #float(distance < 0.75 * np.linalg.norm(INIT_KETTLE_SITE - TARGET_KETTLE_SITE))
             else:
                 # compute distance to goal
                 distance = np.linalg.norm(
@@ -102,21 +109,28 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
 
                 # check whether we completed the task
                 complete = distance < BONUS_THRESH * np.linalg.norm(self.init_qpos[element_idx] - next_goal[element_idx])
+                if i == 0:
+                    bonus = float(complete) \
+                            + float(distance < BONUS_THRESH * np.linalg.norm(self.init_qpos[element_idx] - next_goal[element_idx]))
+
 
             if complete and (all_completed_so_far or not self.ENFORCE_TASK_ORDER):
                 completions.append(element)
             all_completed_so_far = all_completed_so_far and complete
-        if self.REMOVE_TASKS_WHEN_COMPLETE:
+        if self.REMOVE_TASKS_WHEN_COMPLETE and self.real_step:
+            if completions:
+                print("#############")
+                print("Solved: ", completions)
+                print("#############")
             [self.tasks_to_complete.remove(element) for element in completions]
-        bonus = float(len(completions))
         reward_dict['bonus'] = bonus
 
-        if self.DENSE_REWARD:
-            reward_dict['goal_dist'] = np.linalg.norm(obs_dict['goal_dist'])
+        if self.DENSE_REWARD and self.tasks_to_complete:
+            reward_dict['goal_dist'] = np.sum(obs_dict['goal_dist'])
             reward_dict['approach_dist'] = np.linalg.norm(obs_dict['approach_dist'])
-            reward_dict['r_total'] = -1 * reward_dict['goal_dist'] - 0.5 * reward_dict['approach_dist'] + bonus
+            reward_dict['r_total'] = -1 * reward_dict['goal_dist'] - 0.5 * reward_dict['approach_dist'] + 0.5 * reward_dict['bonus']
         else:
-            reward_dict['r_total'] = bonus
+            reward_dict['r_total'] = float(len(completions))
         score = bonus
         return reward_dict, score
 
@@ -130,10 +144,11 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
                 element_idx = OBS_ELEMENT_INDICES[wrong_task]
                 distance = np.linalg.norm(obs[..., element_idx] - all_goal[element_idx])
                 complete = distance < BONUS_THRESH
-                if complete: 
+                if complete:
                     done = True
                     break
         env_info['completed_tasks'] = set(self.TASK_ELEMENTS) - set(self.tasks_to_complete)
+        env_info['solved'] = done
         return obs, reward, done, env_info
 
     # def render(self, mode='human'):
@@ -142,8 +157,8 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
 
     def _get_obs(self):
         obs = super()._get_obs()
-        if self.DENSE_REWARD:
-            assert len(self.tasks_to_complete) == 1, "Currently only supports single-object skills for dense rewards."
+        if self.DENSE_REWARD and self.tasks_to_complete:
+            #assert len(self.tasks_to_complete) == 1, "Currently only supports single-object skills for dense rewards."
 
             # compute distance to next subgoal
             element_idx = OBS_ELEMENT_INDICES[self.tasks_to_complete[0]]
@@ -221,6 +236,9 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
         self.tasks_to_complete = state_dict['tasks_to_complete']
         self.sim.forward()
 
+    def real_env_step(self, real_step):
+        self.real_step = real_step
+
     @staticmethod
     def check_task_done(task_name, obs):
         assert task_name in OBS_ELEMENT_INDICES, "Task {} is not defined!".format(task_name)
@@ -261,7 +279,7 @@ class KitchenRand(KitchenBase):
 
 class KitchenDatasetInit(KitchenBase):
     """Loads states from given rollout sequences & initializes environment accordingly."""
-    DATASET_PATH = "/Users/kpertsch/data/kitchen_2_rollouts"        # path to root folder for datasets
+    DATASET_PATH = "/private/home/kpertsch/data/kitchen_2_fracRollouts2"        # path to root folder for datasets
 
 
     def __init__(self, *args, **kwargs):
@@ -277,7 +295,8 @@ class KitchenDatasetInit(KitchenBase):
 
         # randomly sample joints & gripper position from the loaded dataset
         sample_task = np.random.choice(list(OBS_ELEMENT_INDICES))
-        sample_state = self._init_states[sample_task][np.random.randint(self._init_states[sample_task].shape[0])]
+        sample_start_idx = int(np.floor(0.9 * self._init_states[sample_task].shape[0])) if sample_task not in self.TASK_ELEMENTS else 0
+        sample_state = self._init_states[sample_task][np.random.randint(sample_start_idx, self._init_states[sample_task].shape[0])]
         reset_pos[:9] = sample_state[:9]
 
         # for each object that is not target object and not sampled task: sample in range(start, goal)
@@ -347,6 +366,15 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
 
 
 # MULTI TASK -- DATA COLLECT -- FIXED ENVS
+
+class Kitchen_MW_KET_BB_LS_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'kettle', 'bottom burner', 'light switch']
+
+class Kitchen_MW_LS_SC_TB_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'light switch', 'slide cabinet', 'top burner']
+
+class Kitchen_MW_TB_LS_SC_V0(KitchenBase):
+    TASK_ELEMENTS = ['microwave', 'top burner', 'light switch', 'slide cabinet']
 
 class Kitchen_BB_TB_LS_SC_V0(KitchenBase):
     TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet']
@@ -446,6 +474,12 @@ class Kitchen_KET_LS_SC_BB_V0(KitchenBase):
 
 class Kitchen_KET_LS_SC_HC_V0(KitchenBase):
     TASK_ELEMENTS = ['kettle', 'light switch', 'slide cabinet', 'hinge cabinet']
+
+class Kitchen_HC_KET_BB_LS_V0(KitchenBase):
+    TASK_ELEMENTS = ['hinge cabinet', 'kettle', 'bottom burner', 'light switch']
+
+class Kitchen_SC_KET_BB_LS_V0(KitchenBase):
+    TASK_ELEMENTS = ['slide cabinet', 'kettle', 'bottom burner', 'light switch']
 
 
 # SINGLE TASK -- FIXED ENVS
