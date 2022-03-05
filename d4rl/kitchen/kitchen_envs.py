@@ -35,6 +35,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
     REMOVE_TASKS_WHEN_COMPLETE = True
     TERMINATE_ON_TASK_COMPLETE = True
     TERMINATE_ON_WRONG_COMPLETE = False
+    ENFORCE_TASK_ORDER = True
 
     def __init__(self, dataset_url=None, ref_max_score=None, ref_min_score=None, **kwargs):
         self.tasks_to_complete = list(self.TASK_ELEMENTS)
@@ -75,7 +76,7 @@ class KitchenBase(KitchenTaskRelaxV1, OfflineEnv):
                 next_obj_obs[..., element_idx - idx_offset] -
                 next_goal[element_idx])
             complete = distance < BONUS_THRESH
-            if complete and all_completed_so_far: #element == self.tasks_to_complete[0]:
+            if complete and (all_completed_so_far or not self.ENFORCE_TASK_ORDER):
                 completions.append(element)
             all_completed_so_far = all_completed_so_far and complete
         if self.REMOVE_TASKS_WHEN_COMPLETE:
@@ -145,3 +146,8 @@ class KitchenMicrowaveKettleLightSliderV0(KitchenBase):
         data = self.get_dataset()
         seqs = self._split_data_into_seqs(data)
         return seqs[1]['states'][-1]
+
+class KitchenAllTasksV0(KitchenBase):
+    TASK_ELEMENTS = ['bottom burner', 'top burner', 'light switch', 'slide cabinet', 'hinge cabinet', 'microwave', 'kettle']
+    ENFORCE_TASK_ORDER = False
+
